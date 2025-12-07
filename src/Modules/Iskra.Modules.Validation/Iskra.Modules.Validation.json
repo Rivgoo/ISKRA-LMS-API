@@ -1,0 +1,7 @@
+{
+  "UserValidation": {
+    "MinFirstNameLength": 2,
+    "MaxFirstNameLength": 80,
+    "MinPasswordLength": 8
+  }
+}
