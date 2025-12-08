@@ -63,7 +63,7 @@ dotnet ef migrations add <MigrationName> --project src/Infrastructure/Iskra.Infr
 
 **Example:**
 ```bash
-dotnet ef migrations add AddUserPhoneNumber --project src/Infrastructure/Iskra.Infrastructure.MariaDb
+dotnet ef migrations add InitialCreate --project src/Infrastructure/Iskra.Infrastructure.MariaDb
 ```
 
 > **Note:** This works because the `MariaDbContextFactory` inside the project tells the EF tools how to create the `DbContext` and read the connection string from the local JSON configuration.

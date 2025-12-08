@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Iskra.Application.Errors;
+using System.Text.Json.Serialization;
 
 namespace Iskra.Application.Results;
 

@@ -1,6 +1,7 @@
 ﻿using Iskra.Application.Abstractions.Repositories.Base;
 using Iskra.Application.Abstractions.Services.Base;
-using Iskra.Application.Abstractions.Validation;
+using Iskra.Application.Abstractions.Validation.Base;
+using Iskra.Application.Errors;
 using Iskra.Application.Results;
 using Iskra.Core.Domain.Common;
 
@@ -41,7 +42,7 @@ internal abstract class EntityService<TEntity, TId, TRepository>
             : EntityErrors<TEntity, TId>.NotFoundById(entityId);
     }
 
-    public virtual async Task<Result<TEntity>> CreateAsync(TEntity newEntity)
+    public virtual async Task<Result<TEntity>> CreateAsync(TEntity newEntity, CancellationToken cancellationToken = default)
     {
         if (newEntity is null) return EntityErrors<TEntity, TId>.CreateNullFailure;
 
@@ -49,32 +50,35 @@ internal abstract class EntityService<TEntity, TId, TRepository>
         if (validationResult.IsFailure) return validationResult.ToValue<TEntity>();
 
         Repository.Add(newEntity);
-        await UnitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
+
         return Result<TEntity>.Ok(newEntity);
     }
 
-    public virtual async Task<Result<TEntity>> UpdateAsync(TEntity changedEntity)
+    public virtual async Task<Result<TEntity>> UpdateAsync(TEntity changedEntity, CancellationToken cancellationToken = default)
     {
         if (changedEntity is null) return EntityErrors<TEntity, TId>.UpdateNullFailure;
 
-        var existsResult = await CheckExistsByIdAsync(changedEntity.Id, default);
+        var existsResult = await CheckExistsByIdAsync(changedEntity.Id, cancellationToken);
         if (existsResult.IsFailure) return existsResult.ToValue<TEntity>();
 
         var validationResult = await ValidationService.ValidateAsync(changedEntity);
         if (validationResult.IsFailure) return validationResult.ToValue<TEntity>();
 
         Repository.Update(changedEntity);
-        await UnitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
+
         return Result<TEntity>.Ok(changedEntity);
     }
 
-    public virtual async Task<Result> DeleteByIdAsync(TId entityId)
+    public virtual async Task<Result> DeleteByIdAsync(TId entityId, CancellationToken cancellationToken = default)
     {
-        var entityResult = await GetByIdAsync(entityId, default);
+        var entityResult = await GetByIdAsync(entityId, cancellationToken);
         if (entityResult.IsFailure) return entityResult;
 
         Repository.Remove(entityResult.Value!);
-        await UnitOfWork.SaveChangesAsync();
+        await UnitOfWork.SaveChangesAsync(cancellationToken);
+
         return Result.Ok();
     }
 }

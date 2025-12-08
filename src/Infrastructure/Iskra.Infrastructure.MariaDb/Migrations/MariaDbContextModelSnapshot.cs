@@ -83,6 +83,20 @@ namespace Iskra.Infrastructure.MariaDb.Migrations
                     b.ToTable("roles", (string)null);
                 });
 
+            modelBuilder.Entity("Iskra.Core.Domain.Entities.RolePermission", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Permission")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("RoleId", "Permission");
+
+                    b.ToTable("role_permissions", (string)null);
+                });
+
             modelBuilder.Entity("Iskra.Core.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -156,6 +170,17 @@ namespace Iskra.Infrastructure.MariaDb.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Iskra.Core.Domain.Entities.RolePermission", b =>
+                {
+                    b.HasOne("Iskra.Core.Domain.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Iskra.Core.Domain.Entities.UserRole", b =>

@@ -1,7 +1,7 @@
 ﻿using Iskra.Application.Results;
 using Iskra.Core.Domain.Common;
 
-namespace Iskra.Application.Abstractions.Validation;
+namespace Iskra.Application.Abstractions.Validation.Base;
 
 /// <summary>
 /// Defines a contract for validating an entity against a set of rules.

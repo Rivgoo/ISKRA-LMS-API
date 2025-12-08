@@ -1,4 +1,4 @@
-﻿namespace Iskra.Application.Results;
+﻿namespace Iskra.Application.Errors;
 
 /// <summary>
 /// Represents the types of errors that can occur within the application or system operations.

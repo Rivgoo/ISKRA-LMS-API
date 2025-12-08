@@ -14,17 +14,17 @@ internal sealed class UserRepository(AppDbContextBase dbContext)
         return await Entities.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
-    public async Task<int> SetActiveStatusAsync(Guid userId, bool isActive)
+    public async Task<int> SetActiveStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken = default)
     {
         return await Entities
             .Where(u => u.Id == userId)
-            .ExecuteUpdateAsync(updates => updates.SetProperty(u => u.IsActive, isActive));
+            .ExecuteUpdateAsync(updates => updates.SetProperty(u => u.IsActive, isActive), cancellationToken);
     }
 
-    public async Task<int> UpdatePasswordHashAsync(Guid userId, string newPasswordHash)
+    public async Task<int> UpdatePasswordHashAsync(Guid userId, string newPasswordHash, CancellationToken cancellationToken = default)
     {
         return await Entities
             .Where(u => u.Id == userId)
-            .ExecuteUpdateAsync(updates => updates.SetProperty(u => u.PasswordHash, newPasswordHash));
+            .ExecuteUpdateAsync(updates => updates.SetProperty(u => u.PasswordHash, newPasswordHash), cancellationToken);
     }
 }

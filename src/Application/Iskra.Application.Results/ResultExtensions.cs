@@ -1,4 +1,6 @@
-﻿namespace Iskra.Application.Results;
+﻿using Iskra.Application.Errors;
+
+namespace Iskra.Application.Results;
 
 /// <summary>
 /// Provides extension methods for the <see cref="Result"/> and <see cref="Result{TValue}"/> classes

@@ -14,7 +14,7 @@ public interface IEntityService<TEntity, TId>
     Task<ICollection<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Result> CheckExistsByIdAsync(TId? entityId, CancellationToken cancellationToken = default);
 
-    Task<Result<TEntity>> CreateAsync(TEntity newEntity);
-    Task<Result<TEntity>> UpdateAsync(TEntity changedEntity);
-    Task<Result> DeleteByIdAsync(TId entityId);
+    Task<Result<TEntity>> CreateAsync(TEntity newEntity, CancellationToken cancellationToken = default);
+    Task<Result<TEntity>> UpdateAsync(TEntity changedEntity, CancellationToken cancellationToken = default);
+    Task<Result> DeleteByIdAsync(TId entityId, CancellationToken cancellationToken = default);
 }

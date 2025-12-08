@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json.Serialization;
 
-namespace Iskra.Application.Results;
+namespace Iskra.Application.Errors;
 
 /// <summary>
 /// Represents a specific error that occurred during an operation, encapsulating details such as a code, description, and type.

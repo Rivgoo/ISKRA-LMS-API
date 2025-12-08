@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Iskra.Core.Domain\Iskra.Core.Domain.csproj" />
-    <ProjectReference Include="..\Iskra.Application.Errors\Iskra.Application.Errors.csproj" />
   </ItemGroup>
 
 </Project>

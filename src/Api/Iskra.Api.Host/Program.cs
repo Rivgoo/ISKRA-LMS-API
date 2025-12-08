@@ -1,5 +1,6 @@
 using Iskra.Api.Host.PluginManagement;
 using Iskra.Shared.CustomConsoleFormatter.Extensions;
+using Iskra.Application.Services;
 
 namespace Iskra.Api.Host;
 
@@ -44,12 +45,15 @@ public class Program
             throw new InvalidOperationException("Fatal: 'PluginSettings:RootPath' is missing.");
 
         var enabledModules = pluginSettings.GetSection("EnabledModules").Get<string[]>();
+        var systemModules = builder.Configuration.GetSection("SystemModules").Get<string[]>();
 
         if (enabledModules == null || enabledModules.Length == 0)
         {
             programLogger.LogWarning("No modules are listed in 'PluginSettings:EnabledModules'. System will start empty.");
             enabledModules = [];
         }
+
+        enabledModules = enabledModules.Concat(systemModules ?? []).Distinct().ToArray();
 
         var enableCleaner = pluginSettings.GetValue<bool>("EnableCleaner");
 
@@ -67,6 +71,9 @@ public class Program
         // Basic API Setup
         var mvcBuilder = builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+
+        // Register Core Business Logic (Application Layer)
+        builder.Services.AddApplicationServices();
 
         // Load Modules
         var environment = builder.Environment.EnvironmentName;

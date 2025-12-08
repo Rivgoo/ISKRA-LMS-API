@@ -60,6 +60,26 @@ namespace Iskra.Infrastructure.MariaDb.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "role_permissions",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Permission = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_role_permissions", x => new { x.RoleId, x.Permission });
+                    table.ForeignKey(
+                        name: "FK_role_permissions_roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "refresh_tokens",
                 columns: table => new
                 {
@@ -137,6 +157,9 @@ namespace Iskra.Infrastructure.MariaDb.Migrations
         {
             migrationBuilder.DropTable(
                 name: "refresh_tokens");
+
+            migrationBuilder.DropTable(
+                name: "role_permissions");
 
             migrationBuilder.DropTable(
                 name: "user_roles");
