@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Application\Iskra.Application.Services\Iskra.Application.Services.csproj" />
     <ProjectReference Include="..\..\Core\Iskra.Core.Contracts\Iskra.Core.Contracts.csproj" />
     <ProjectReference Include="..\..\Shared\Iskra.Shared.CustomConsoleFormatter\Iskra.Shared.CustomConsoleFormatter.csproj" />
   </ItemGroup>

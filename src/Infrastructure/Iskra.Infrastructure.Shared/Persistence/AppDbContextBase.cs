@@ -1,7 +1,6 @@
-﻿using Iskra.Core.Domain.Common;
-using Iskra.Core.Domain.Entities;
+﻿using Iskra.Core.Contracts.Persistence;
+using Iskra.Core.Domain.Common;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Iskra.Infrastructure.Shared.Persistence;
 
@@ -14,12 +13,6 @@ public abstract class AppDbContextBase : DbContext
     protected AppDbContextBase(DbContextOptions options) : base(options)
     {
     }
-
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Role> Roles => Set<Role>();
-    public DbSet<UserRole> UserRoles => Set<UserRole>();
-    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     /// <summary>
     /// Saves all changes made in this context to the database.
@@ -58,10 +51,21 @@ public abstract class AppDbContextBase : DbContext
             }
         }
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContextBase).Assembly);
+
+        // Dynamic Module Loading
+        var moduleConfigurations = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .Where(t => typeof(IModelConfiguration).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+            .Select(Activator.CreateInstance)
+            .Cast<IModelConfiguration>();
+
+        foreach (var config in moduleConfigurations)
+            config.Configure(modelBuilder);
     }
 }

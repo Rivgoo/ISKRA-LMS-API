@@ -1,0 +1,21 @@
+<Project>
+	<PropertyGroup>
+		<RootBuildDir>$(MSBuildThisFileDirectory)build\</RootBuildDir>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+
+	<!-- Host -->
+	<PropertyGroup Condition="'$(MSBuildProjectName)' == 'Iskra.Api.Host'">
+		<OutputPath>$(RootBuildDir)</OutputPath>
+	</PropertyGroup>
+
+	<!-- Modules (Features & Infrastructure) -->
+	<!-- Matches Iskra.Modules.Users, Iskra.Modules.Infrastructure.MariaDb, etc. -->
+	<PropertyGroup Condition="$(MSBuildProjectName.StartsWith('Iskra.Modules.'))">
+		<OutputPath>$(RootBuildDir)Modules\</OutputPath>
+		<IsIskraModule>true</IsIskraModule>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+	</PropertyGroup>
+</Project>

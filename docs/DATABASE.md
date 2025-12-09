@@ -1,120 +1,111 @@
-# Iskra Database Architecture and Workflow
+# Iskra Database Architecture
 
-This document outlines the database architecture for the Iskra platform. The design is modular, allowing for easy extension and support for multiple database providers (e.g., MariaDB, PostgreSQL, SQL Server).
+This document outlines the database architecture for the Iskra Modular Platform. The design allows the platform to be database-agnostic while ensuring type safety, modularity, and a unified development workflow.
 
 ## Core Principles
 
--   **Provider Agnostic:** The core application logic does not depend on a specific database.
--   **Modularity:** Each database provider is implemented as a separate, self-contained module.
--   **Clean Architecture:** Database logic is strictly confined to the Infrastructure layer.
--   **Configuration over Code:** Schema details like table names can be overridden per provider without changing shared code.
+1.  **Unified Domain:** All Entities (`User`, `Role`, `Course`) are defined in specific modules but are loaded into a **Single Context** at runtime.
+2.  **Modular Provider:** The database engine (MariaDB, PostgreSQL) is a pluggable module. It can apply global conventions (e.g., snake_case) without modifying core entities.
+3.  **Centralized Migrations:** Migrations are generated based on the **Build Output**. The infrastructure layer scans the compiled module DLLs to discover entities dynamically.
+4.  **Decoupled Configuration:** Entities define their own constraints (`MaxLength`, `Required`), but the Provider defines physical storage rules (`Table Names`, `Column Types`).
 
-## Component Breakdown
+---
 
-The database layer is split into two main parts: a shared infrastructure project and specific provider implementations.
+## Architecture Overview
 
-### 1. `Iskra.Infrastructure.Shared`
+### 1. Entity Definition (Domain Layer)
+Entities are defined in their respective modules (Core or Feature Modules). They are strictly POCO classes.
 
-This project is the foundation for all database modules. It is provider-agnostic.
+*   **Shared Entities:** Located in `src/Core/Iskra.Core.Domain` (e.g., `User`, `Role`).
+*   **Module Entities:** Located in `src/Modules/Iskra.Modules.[Feature]/Domain` (e.g., `Course`, `Lesson`).
 
--   **`AppDbContextBase.cs`**: An abstract `DbContext` that contains:
-    -   `DbSet` properties for core entities (`User`, `Role`, etc.).
-    -   Automatic timestamping logic (`IAuditable`) in `SaveChangesAsync`.
-    -   Logic to apply **default** entity configurations from its own assembly.
--   **`/Configurations`**: Contains default `IEntityTypeConfiguration<T>` implementations for core entities. These define standard table names (e.g., `Users`), relationships, and constraints.
+### 2. Entity Configuration (Persistence Layer)
+We use `IEntityTypeConfiguration<T>` to define constraints.
+*   **Shared Configurations:** `src/Infrastructure/Iskra.Infrastructure.Shared` contains configs for Core entities.
+*   **Module Configurations:** Feature modules contain their own configuration classes implementing `IModelConfiguration`.
 
-### 2. `Iskra.Infrastructure.MariaDb` (Example Provider)
+### 3. Database Provider (Infrastructure Layer)
+The concrete database logic resides in `src/Modules/Iskra.Modules.Infrastructure.[Provider]`.
+*   **Example:** `Iskra.Modules.MariaDb`
+*   **Responsibilities:**
+    *   Registers the `DbContext` with the DI container.
+    *   Applies global naming conventions (e.g., converting `PascalCase` properties to `snake_case` columns).
+    *   Executes migrations on startup (optional).
 
-This is a concrete implementation module for a specific database.
+---
 
--   **`MariaDbContext.cs`**: Inherits from `AppDbContextBase` and is specific to MariaDB. Its primary role is to apply its own configurations **after** the base configurations, allowing for overrides.
--   **`MariaDbModule.cs`**: The `IModule` implementation that:
-    -   Reads the connection string from its own `json` config file.
-    -   Registers the `MariaDbContext` with the correct provider (`UseMySql`).
-    -   Handles automatic database migrations on startup if enabled.
--   **`MariaDbContextFactory.cs`**: An `IDesignTimeDbContextFactory` implementation. This is crucial for allowing `dotnet-ef` tools to create migrations without needing to run the main Host application.
--   **`/Configurations`**: (Optional) Contains provider-specific overrides for entity configurations.
+## Migration Workflow
 
-## Workflow Guide
+Because Iskra loads modules dynamically, EF Core cannot automatically find your entities at design time. We use a custom **Design-Time Factory** that loads compiled module DLLs from the `build` folder.
 
-### Working with Migrations
-
-Migrations are managed within each specific database module (e.g., `Iskra.Infrastructure.MariaDb`).
-
-**1. Install the EF Tool Locally:**
-This adds the `dotnet-ef` tool to the manifest.
-```bash
-dotnet tool install dotnet-ef
-```
-
-**2. Restore Local Tools (for new clones or CI/CD):**
-If you pull the project on a new machine, you must restore the local tools.
-```bash
-dotnet tool restore
-```
-
-#### Creating a New Migration
-
-To create a new migration, run the `dotnet ef migrations add` command from the **root of the solution**.
-
-```bash
-dotnet ef migrations add <MigrationName> --project src/Infrastructure/Iskra.Infrastructure.MariaDb
-```
-
-**Example:**
-```bash
-dotnet ef migrations add InitialCreate --project src/Infrastructure/Iskra.Infrastructure.MariaDb
-```
-
-> **Note:** This works because the `MariaDbContextFactory` inside the project tells the EF tools how to create the `DbContext` and read the connection string from the local JSON configuration.
-
-#### Applying Migrations
-
-There are two ways to apply migrations:
-
-1.  **Automatic (Recommended for Development)**
-    Set `"AutoMigrate": true` in the module's JSON configuration (`Iskra.Infrastructure.MariaDb.json`). The application will apply any pending migrations on startup.
-
-2.  **Manual (Recommended for Production)**
-    Set `"AutoMigrate": false` and run the command from the solution root:
+### Prerequisites
+1.  **Build the Solution First:**
+    The migration tool looks for DLLs in `root/build/Modules`. You **must** build the project before creating a migration.
     ```bash
-    dotnet ef database update --project src/Infrastructure/Iskra.Infrastructure.MariaDb
+    dotnet build
     ```
 
-### Overriding Table Configurations
-
-Our architecture uses a "last one wins" principle for configuration.
-
-1.  **Default Configuration (`Shared`):**
-    ```csharp
-    // src/Infrastructure/Iskra.Infrastructure.Shared/Configurations/UserConfiguration.cs
-    builder.ToTable("Users"); 
+2.  **Install EF Tool:**
+    ```bash
+    dotnet tool restore
     ```
 
-2.  **Override Configuration (`MariaDb`):**
-    ```csharp
-    // src/Infrastructure/Iskra.Infrastructure.MariaDb/Configurations/MariaDbUserConfiguration.cs
-    builder.ToTable("users"); // Override to lowercase
-    ```
+### Creating a Migration
 
-3.  **How it works in `MariaDbContext`:**
-    ```csharp
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // 1. Applies default configs ("Users") from Shared assembly
-        base.OnModelCreating(modelBuilder); 
+To create a migration, target the **Concrete Infrastructure Module** (e.g., MariaDb).
 
-        // 2. Applies specific configs ("users") from this assembly, overriding the default
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); 
-    }
-    ```
+```bash
+dotnet ef migrations add <MigrationName> --project src/Modules/Iskra.Modules.MariaDb
+```
 
-### Adding a New Database Provider (e.g., PostgreSQL)
+**What happens under the hood:**
+1.  `MariaDbContextFactory` starts.
+2.  It locates the `build/Modules` directory.
+3.  It scans and loads all `Iskra.Modules.*.dll` files into memory.
+4.  It discovers all `IModelConfiguration` implementations (from Users, Auth, Validation, etc.).
+5.  It constructs a unified `MariaDbContext` containing every entity in the system.
+6.  It compares this state with the previous snapshot and generates the migration class.
 
-1.  Create a new project `Iskra.Infrastructure.PostgreSql`.
-2.  Add NuGet package `Npgsql.EntityFrameworkCore.PostgreSQL`.
-3.  Create `PostgreSqlDbContext` inheriting from `AppDbContextBase`.
-4.  Implement `PostgreSqlModule` to register the context with `UseNpgsql`.
-5.  Implement `PostgreSqlDbContextFactory` for migrations.
-6.  (Optional) Add override configurations in a `/Configurations` folder.
-7.  Add `"Iskra.Infrastructure.PostgreSql"` to `EnabledModules` in the Host's `appsettings.json`.
+### Applying Migrations
+
+**Option A: Automatic (Development)**
+Enable `AutoMigrate` in `Iskra.Modules.MariaDb.json`. The module will migrate the DB when the Host starts.
+
+**Option B: Manual (Production)**
+Run the update command:
+```bash
+dotnet ef database update --project src/Modules/Iskra.Modules.MariaDb
+```
+
+---
+
+## Adding a New Entity
+
+1.  **Define Class:** Create the entity class in `Domain/Entities`.
+2.  **Define Config:** Create the `IEntityTypeConfiguration` in `Infrastructure/Persistence`.
+    *   *Note:* If inside a module, create a class implementing `IModelConfiguration` to register it.
+3.  **Build:** Run `dotnet build`.
+4.  **Add Migration:** Run the `dotnet ef migrations add` command shown above.
+
+## Adding a New Database Provider
+
+To add support for a new database (e.g., PostgreSQL):
+
+1.  Create `src/Modules/Iskra.Modules.Infrastructure.PostgreSql`.
+2.  Inherit `AppDbContextBase` -> `PostgreSqlDbContext`.
+3.  Implement `BaseDesignTimeFactory<PostgreSqlDbContext>`.
+4.  Implement `IModule` to register `AddDbContext<AppDbContextBase, PostgreSqlDbContext>`.
+5.  Add to `EnabledModules` in `appsettings.json`.
+
+---
+
+## Troubleshooting
+
+**"No entities found" during migration:**
+*   Did you run `dotnet build`?
+*   Check `src/Core/Iskra.Core.Contracts/Constants/PathConstants.cs` to ensure the build path matches your system.
+*   Ensure your module project file has the correct output path configuration (handled by `Directory.Build.props`).
+
+**"Table 'users' already exists":**
+*   Check if you are mixing `AutoMigrate` with manual SQL scripts.
+*   Ensure `__EFMigrationsHistory` table exists in your database.

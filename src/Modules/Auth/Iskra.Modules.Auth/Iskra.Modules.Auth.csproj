@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Application\Iskra.Application.Abstractions\Iskra.Application.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Core\Iskra.Core.Contracts\Iskra.Core.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Core\Iskra.Core.Domain\Iskra.Core.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Iskra.Infrastructure.Shared\Iskra.Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\Iskra.Modules.Auth.Abstractions\Iskra.Modules.Auth.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

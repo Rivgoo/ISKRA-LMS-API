@@ -1,6 +1,6 @@
 using Iskra.Api.Host.PluginManagement;
 using Iskra.Shared.CustomConsoleFormatter.Extensions;
-using Iskra.Application.Services;
+using Iskra.Core.Contracts.Constants;
 
 namespace Iskra.Api.Host;
 
@@ -39,11 +39,6 @@ public class Program
         // Host Configuration
         var pluginSettings = builder.Configuration.GetSection("PluginSettings");
 
-        var rootPath = pluginSettings["RootPath"];
-
-        if (string.IsNullOrWhiteSpace(rootPath))
-            throw new InvalidOperationException("Fatal: 'PluginSettings:RootPath' is missing.");
-
         var enabledModules = pluginSettings.GetSection("EnabledModules").Get<string[]>();
         var systemModules = builder.Configuration.GetSection("SystemModules").Get<string[]>();
 
@@ -57,13 +52,7 @@ public class Program
 
         var enableCleaner = pluginSettings.GetValue<bool>("EnableCleaner");
 
-        var absoluteRootPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, rootPath));
-
-        // Cleanup Modules
-        if (enableCleaner)
-            ModuleCleaner.Clean(absoluteRootPath, enabledModules, loggerFactory.CreateLogger<ModuleCleaner>());
-        else
-            programLogger.LogInformation("Module cleanup is disabled in configuration.");
+        var absoluteRootPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PathConstants.ModulesRootPath));
 
         // Initialize Assembly Resolver
         AssemblyResolver.Initialize(absoluteRootPath, loggerFactory.CreateLogger<AssemblyResolver>());
@@ -71,9 +60,6 @@ public class Program
         // Basic API Setup
         var mvcBuilder = builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-
-        // Register Core Business Logic (Application Layer)
-        builder.Services.AddApplicationServices();
 
         // Load Modules
         var environment = builder.Environment.EnvironmentName;
