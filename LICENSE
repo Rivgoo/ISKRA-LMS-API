@@ -1,0 +1,53 @@
+ISKRA COMMUNITY LICENSE (ICL)
+Version 1.0
+
+Copyright (c) 2025 Pavlo Panko. All rights reserved.
+
+This license governs the use of the accompanying software. By downloading, accessing, installing, or using the software, you agree to the terms of this license. If you do not agree to these terms, do not use the software.
+
+1. DEFINITIONS
+   "Original Software" refers to the Iskra Platform source code, object code, and associated documentation files as provided by the Licensor.
+   "Derivative Work" refers to any work that is based upon the Original Software, including modifications, translations, adaptations, forks, or any other form in which the code may be recast, transformed, or adapted.
+   "Software" collectively refers to the Original Software and any Derivative Works.
+   "Licensor" refers to Pavlo Panko.
+   "Licensee" refers to the individual or entity exercising permissions granted by this License.
+   "Commercial Use" refers to using the Software for direct or indirect financial gain, including but not limited to:
+      (a) SaaS (Software as a Service) offerings;
+      (b) Internal business operations of a for-profit entity;
+      (c) Bundling the Software with other paid products or services.
+   "User" refers to a unique individual account registered, active, or provisioned within the Software.
+
+2. GRANT OF LICENSE
+   Subject to the terms and conditions of this License, Licensor hereby grants Licensee a non-exclusive, worldwide, revocable license to use, reproduce, modify, and distribute the Software.
+
+3. CONDITIONS AND RESTRICTIONS
+
+   A. VIRAL EFFECT ON DERIVATIVES
+      Any Derivative Work created by Licensee contains portions of the Original Software and is therefore subject to the terms of this License. Licensee cannot re-license, sublicense, or distribute Derivative Works under terms that contradict, remove, or weaken the restrictions of this License (specifically the User Limit in Section 3.C).
+
+   B. NON-COMMERCIAL USE
+      Unlimited use of the Software is permitted for Non-Commercial purposes (e.g., educational, non-profit, personal study) regardless of the number of Users.
+
+   C. LIMITED COMMERCIAL USE ("The 500-User Limit")
+      Commercial Use of the Software is permitted royalty-free PROVIDED THAT the total aggregate number of Users across all instances, forks, environments, or deployments owned, managed, or operated by the Licensee does not exceed 500 (five hundred).
+      
+      Splitting Users across multiple servers, databases, or instances to circumvent this limit is strictly prohibited and counts as a single aggregate total for the purpose of this License.
+
+   D. ENTERPRISE THRESHOLD
+      If Licensee's Commercial usage exceeds 500 Users in aggregate, this License automatically terminates. Licensee must immediately obtain a Commercial Enterprise License from the Licensor to continue using the Software or any Derivative Work.
+
+   E. LICENSE MODIFICATIONS
+      Licensor reserves the right to update, modify, or revise this License at any time without prior notice. Continued use of the Software (including pulling updates or using newer versions) constitutes acceptance of the revised License terms.
+
+4. INTELLECTUAL PROPERTY
+   This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Software. Licensee may not state or imply that their Derivative Work is an official product of the Licensor.
+
+5. AUDIT RIGHTS
+   If Licensee is using the Software for Commercial Use, Licensor reserves the right to request a report verifying the number of Users to ensure compliance with Section 3.C. Failure to provide such a report within 30 days constitutes a breach of this License.
+
+6. TERMINATION
+   This License and the rights granted hereunder will terminate automatically if Licensee breaches any term of this License. Upon termination, Licensee must cease all use and distribution of the Software.
+
+7. DISCLAIMER OF WARRANTY AND LIABILITY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+   IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, DATA LOSS, REVENUE LOSS, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
