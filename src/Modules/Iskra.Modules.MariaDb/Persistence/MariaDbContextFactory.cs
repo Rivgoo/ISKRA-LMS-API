@@ -8,7 +8,7 @@ namespace Iskra.Modules.MariaDb.Persistence;
 /// </summary>
 internal class MariaDbContextFactory : BaseDesignTimeFactory<MariaDbContext>
 {
-    protected override string ConfigFileName => "Iskra.Modules.MariaDb.json";
+    protected override string ModuleConfigSectionName => "Iskra.Modules.MariaDb";
     protected override string ConnectionStringName => "DefaultConnection";
 
     protected override DbContextOptionsBuilder<MariaDbContext> CreateOptionsBuilder(string connectionString)

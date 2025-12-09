@@ -1,73 +1,58 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace Iskra.Bootstrapper.PluginManagement;
 
 /// <summary>
-/// Orchestrates the loading of modules from a flat directory structure with detailed error reporting.
+/// Orchestrates the loading of modules from a flat directory structure.
 /// </summary>
 internal class ModuleLoader
 {
-    /// <summary>
-    /// Scans a flat directory for assemblies implementing IModule and loads their configurations.
-    /// </summary>
-    /// <param name="rootPath">The directory containing all module DLLs and configs.</param>
-    /// <param name="environmentName">The current hosting environment.</param>
-    /// <returns>A list of loaded modules and their specific configurations.</returns>
-    public static List<(IModule Module, IConfiguration Config)> LoadModules(
-    string rootPath, string[] modulesToLoad, string environmentName, ILoggerFactory loggerFactory)
+    public static List<IModule> LoadModules(
+        string rootPath, string[] modulesToLoad, ILoggerFactory loggerFactory)
     {
-        var loadedModules = new List<(IModule, IConfiguration)>();
+        var loadedModules = new List<IModule>();
         var logger = loggerFactory.CreateLogger<ModuleLoader>();
 
-        string absolutePath;
-        if (Path.IsPathRooted(rootPath))
-            absolutePath = rootPath;
-        else
-            absolutePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, rootPath);
+        string absolutePath = Path.IsPathRooted(rootPath)
+            ? rootPath
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, rootPath);
 
         absolutePath = Path.GetFullPath(absolutePath);
 
         if (!Directory.Exists(absolutePath))
         {
-            logger.LogWarning("Plugin directory '{PluginDirectory}' did not exist. Creating it now.", absolutePath);
-            Directory.CreateDirectory(absolutePath);
-
+            logger.LogWarning("Plugin directory '{PluginDirectory}' does not exist.", absolutePath);
             return loadedModules;
         }
 
-        logger.LogInformation("Processing {ModuleCount} modules from: {PluginDirectory}", modulesToLoad.Length, absolutePath);
-
         foreach (var moduleName in modulesToLoad)
         {
-            var (Module, Config) = TryLoadModule(moduleName, absolutePath, environmentName, logger, loggerFactory);
-
-            if (Module != null)
+            var module = TryLoadModule(moduleName, absolutePath, logger);
+            if (module != null)
             {
-                loadedModules.Add((Module, Config!));
-                logger.LogInformation("Loaded: {ModuleName}", Module.Name);
+                loadedModules.Add(module);
+                logger.LogInformation("Loaded Module: {ModuleName}", module.Name);
             }
             else
             {
-                logger.LogError("Failed to load '{ModuleName}'", moduleName);
-                throw new InvalidOperationException($"File found for '{moduleName}', but it could not be loaded as an IModule.");
+                logger.LogError("Failed to load '{ModuleName}'.", moduleName);
+                throw new InvalidOperationException($"Could not load module '{moduleName}'.");
             }
         }
 
         return loadedModules;
     }
 
-    private static (IModule? Module, IConfiguration? Config) TryLoadModule(
-        string moduleName, string rootDirectory, string envName, ILogger<ModuleLoader> logger, ILoggerFactory loggerFactory)
+    private static IModule? TryLoadModule(string moduleName, string rootDirectory, ILogger logger)
     {
         try
         {
             var dllPath = Path.Combine(rootDirectory, $"{moduleName}.dll");
 
             if (!File.Exists(dllPath))
-                throw new FileNotFoundException($"Module DLL not found: {dllPath} in {rootDirectory}");
+                throw new FileNotFoundException($"Module DLL not found: {dllPath}");
 
             var assembly = Assembly.LoadFrom(dllPath);
 
@@ -76,42 +61,16 @@ internal class ModuleLoader
 
             if (moduleType == null)
             {
-                logger.LogError("ERROR: Type Identity Mismatch in '{AssemblyName}'.", assembly.GetName().Name);
-                logger.LogError("       The plugin implements 'IModule', but it creates a conflict with the Host's 'IModule'.");
-
-                return (null, null);
+                logger.LogError("Assembly '{AssemblyName}' does not contain an implementation of IModule.", assembly.GetName().Name);
+                return null;
             }
 
-            if (Activator.CreateInstance(moduleType) is not IModule module)
-                throw new Exception($"Failed to cast {moduleType.Name} to IModule.");
-
-            var configBuilder = new ConfigurationBuilder();
-
-            var baseConfigPath = Path.Combine(rootDirectory, $"{moduleName}.json");
-            var envConfigPath = Path.Combine(rootDirectory, $"{moduleName}.{envName}.json");
-
-            if (File.Exists(baseConfigPath))
-            {
-                configBuilder.AddJsonFile(baseConfigPath, optional: false, reloadOnChange: true);
-                logger.LogInformation("Loaded config for '{ModuleName}' from '{ConfigFileName}'.", moduleName, Path.GetFileName(baseConfigPath));
-            }
-
-            if (File.Exists(envConfigPath))
-            {
-                configBuilder.AddJsonFile(envConfigPath, optional: true, reloadOnChange: true);
-                logger.LogInformation("Loaded environment-specific config for '{ModuleName}' from '{ConfigFileName}'.", moduleName, Path.GetFileName(envConfigPath));
-            }
-
-            return (module, configBuilder.Build());
+            return Activator.CreateInstance(moduleType) as IModule;
         }
         catch (Exception ex)
         {
-            logger.LogError("Failed to load module from '{ModuleName}'.", Path.GetFileName(moduleName));
-            logger.LogError("         Reason: {Reason}", ex.Message);
-            if (ex.InnerException != null)
-                logger.LogError("         Inner: {Inner}", ex.InnerException.Message);
-
-            return (null, null);
+            logger.LogError(ex, "Error loading module '{ModuleName}'.", moduleName);
+            return null;
         }
     }
 }

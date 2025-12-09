@@ -8,25 +8,34 @@ namespace Iskra.Infrastructure.Shared.Design;
 public abstract class BaseDesignTimeFactory<TContext> : IDesignTimeDbContextFactory<TContext>
     where TContext : AppDbContextBase
 {
-    protected abstract string ConfigFileName { get; }
+    protected abstract string ModuleConfigSectionName { get; }
     protected abstract string ConnectionStringName { get; }
 
     public TContext CreateDbContext(string[] args)
     {
-        // 1. Load Modules into AppDomain so EF Core can find their Entities
+        // Load Modules into AppDomain so EF Core can find their Entities
         DesignTimeAssemblyLoader.LoadModules();
 
-        // 2. Load Configuration
-        var configBuilder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(ConfigFileName, optional: false)
-            .AddJsonFile(ConfigFileName.Replace(".json", ".Development.json"), optional: true);
+        // Locate the CENTRALIZED config file in the build folder
+        var buildPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../../../build"));
 
-        var config = configBuilder.Build();
-        var connectionString = config.GetConnectionString(ConnectionStringName);
+        if (!Directory.Exists(buildPath))
+            throw new DirectoryNotFoundException($"Build directory not found at {buildPath}. Did you build the Host?");
+
+        // Load appsettings.json
+        var configBuilder = new ConfigurationBuilder()
+            .SetBasePath(buildPath)
+            .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile("appsettings.Development.json", optional: true);
+
+        var globalConfig = configBuilder.Build();
+
+        var moduleConfig = globalConfig.GetSection(ModuleConfigSectionName);
+
+        var connectionString = moduleConfig.GetConnectionString(ConnectionStringName);
 
         if (string.IsNullOrWhiteSpace(connectionString))
-            throw new InvalidOperationException($"Connection string '{ConnectionStringName}' missing in {ConfigFileName}");
+            throw new InvalidOperationException($"Connection string '{ConnectionStringName}' missing in section '{ModuleConfigSectionName}' of appsettings.json");
 
         var optionsBuilder = CreateOptionsBuilder(connectionString);
         return CreateContext(optionsBuilder.Options);

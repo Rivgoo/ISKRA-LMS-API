@@ -67,12 +67,12 @@ public static class IskraBuilderExtensions
 
         // Load Modules
         var environment = builder.Environment.EnvironmentName;
-        var loadedModules = ModuleLoader.LoadModules(absoluteRootPath, allModules, environment, loggerFactory);
+        var loadedModules = ModuleLoader.LoadModules(absoluteRootPath, allModules, loggerFactory);
 
         // Register Services
-        foreach (var (module, config) in loadedModules)
+        foreach (var module in loadedModules)
         {
-            module.RegisterServices(builder.Services, config, loggerFactory);
+            module.RegisterServices(builder.Services, builder.Configuration, loggerFactory);
             // Add Controllers from Module Assembly
             builder.Services.AddControllers().AddApplicationPart(module.Assembly);
         }

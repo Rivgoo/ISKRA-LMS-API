@@ -18,14 +18,16 @@ namespace Iskra.Modules.MariaDb;
 public class MariaDbModule : IModule
 {
     private IConfiguration? _moduleConfiguration;
-    public string Name => "Modules.MariaDb";
+    public string Name => "Iskra.Modules.MariaDb";
 
     public int Priority => 1;
 
     public Assembly Assembly => Assembly.GetExecutingAssembly();
 
-    public void RegisterServices(IServiceCollection services, IConfiguration configuration, ILoggerFactory loggerFactory)
+    public void RegisterServices(IServiceCollection services, IConfiguration globalConfiguration, ILoggerFactory loggerFactory)
     {
+        var configuration = globalConfiguration.GetSection(Name);
+
         _moduleConfiguration = configuration;
         var logger = loggerFactory.CreateLogger<MariaDbModule>();
 

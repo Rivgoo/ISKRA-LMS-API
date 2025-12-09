@@ -15,18 +15,20 @@ namespace Iskra.Modules.Validation;
 
 public class ValidationModule : IModule
 {
-	public string Name => "Modules.Validation";
+    public string Name => "Iskra.Modules.Validation";
 
-	public int Priority => 10;
+    public int Priority => 10;
 
-	public Assembly Assembly => Assembly.GetExecutingAssembly();
+    public Assembly Assembly => Assembly.GetExecutingAssembly();
 
-	public void RegisterServices(IServiceCollection services, IConfiguration configuration, ILoggerFactory loggerFactory)
+    public void RegisterServices(IServiceCollection services, IConfiguration globalConfiguration, ILoggerFactory loggerFactory)
     {
+        var config = globalConfiguration.GetSection(Name);
+
         // Bind Configuration
-        services.Configure<UserValidationOptions>(configuration.GetSection("UserValidation"));
-        services.Configure<PasswordValidationOptions>(configuration.GetSection("PasswordValidation"));
-        services.Configure<EmailValidationOptions>(configuration.GetSection("EmailValidation"));
+        services.Configure<UserValidationOptions>(config.GetSection("UserValidation"));
+        services.Configure<PasswordValidationOptions>(config.GetSection("PasswordValidation"));
+        services.Configure<EmailValidationOptions>(config.GetSection("EmailValidation"));
 
         // Register Granular Services
         services.AddScoped<IPasswordValidationService, PasswordValidationService>();

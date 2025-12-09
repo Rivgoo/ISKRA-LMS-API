@@ -1,8 +1,0 @@
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=iskra_lms;User=root;Password=root;"
-  },
-  "DatabaseSettings": {
-    "AutoMigrate": true
-  }
-}

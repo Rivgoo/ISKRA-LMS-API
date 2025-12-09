@@ -12,12 +12,12 @@ namespace Iskra.Bootstrapper;
 /// </summary>
 public class IskraEngine
 {
-    private readonly List<(IModule Module, IConfiguration Config)> _loadedModules;
+    private readonly List<IModule> _loadedModules;
     private readonly string _environment;
     private readonly SecurityOptions _securityOptions;
 
     internal IskraEngine(
-        List<(IModule, IConfiguration)> modules,
+        List<IModule> modules,
         string environment,
         SecurityOptions securityOptions)
     {
@@ -39,9 +39,9 @@ public class IskraEngine
         CorsConfigurator.UseConfiguredCors(app, _securityOptions);
 
         // Sort by Priority
-        var sortedModules = _loadedModules.OrderBy(x => x.Module.Priority).ToList();
+        var sortedModules = _loadedModules.OrderBy(x => x.Priority).ToList();
 
-        foreach (var (module, _) in sortedModules)
+        foreach (var module in sortedModules)
             module.ConfigureMiddleware(app);
 
         PrintBanner(sortedModules.Count, _environment);

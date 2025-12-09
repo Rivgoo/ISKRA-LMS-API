@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />
-    <File Path="Directory.Build.targets" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Iskra.Bootstrapper/Iskra.Bootstrapper.csproj" Id="10b19295-09fa-420f-93fd-1db89ff662fa" />
