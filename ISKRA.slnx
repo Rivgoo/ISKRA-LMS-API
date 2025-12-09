@@ -3,7 +3,9 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
   </Folder>
-  <Folder Name="/src/" />
+  <Folder Name="/src/">
+    <Project Path="src/Iskra.Bootstrapper/Iskra.Bootstrapper.csproj" Id="10b19295-09fa-420f-93fd-1db89ff662fa" />
+  </Folder>
   <Folder Name="/src/Api/">
     <Project Path="src/Api/Iskra.Api.Host/Iskra.Api.Host.csproj" />
   </Folder>
@@ -29,8 +31,8 @@
     <Project Path="src/Modules/Auth/Iskra.Modules.Auth/Iskra.Modules.Auth.csproj" Id="0096f3cd-630f-45df-9bf4-a86825716775" />
   </Folder>
   <Folder Name="/src/Modules/Users/">
-    <Project Path="src/Modules/Users/Iskra.Modules.Users/Iskra.Modules.Users.csproj" />
     <Project Path="src/Modules/Users/Iskra.Modules.Users.Abstractions/Iskra.Modules.Users.Abstractions.csproj" Id="cbbea2a5-2758-417a-aedb-76be7b92d6e2" />
+    <Project Path="src/Modules/Users/Iskra.Modules.Users/Iskra.Modules.Users.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Validation/">
     <Project Path="src/Modules/Validation/Iskra.Modules.Validation.Abstractions/Iskra.Modules.Validation.Abstractions.csproj" Id="87fcbb80-bfb4-4291-a5aa-047a60ccb9b2" />

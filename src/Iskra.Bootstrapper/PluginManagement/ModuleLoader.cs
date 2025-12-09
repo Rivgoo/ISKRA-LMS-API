@@ -1,7 +1,9 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Iskra.Api.Host.PluginManagement;
+namespace Iskra.Bootstrapper.PluginManagement;
 
 /// <summary>
 /// Orchestrates the loading of modules from a flat directory structure with detailed error reporting.

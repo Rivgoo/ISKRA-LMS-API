@@ -1,6 +1,7 @@
-﻿using System.Reflection;
+﻿using Microsoft.Extensions.Logging;
+using System.Reflection;
 
-namespace Iskra.Api.Host.PluginManagement;
+namespace Iskra.Bootstrapper.PluginManagement;
 
 /// <summary>
 /// Handles the resolution of assemblies that are not found in the host's base directory.
