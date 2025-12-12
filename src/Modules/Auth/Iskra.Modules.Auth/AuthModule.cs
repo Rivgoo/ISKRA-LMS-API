@@ -1,11 +1,13 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
 using Iskra.Modules.Auth.Abstractions.Repositories;
 using Iskra.Modules.Auth.Abstractions.Services;
+using Iskra.Modules.Auth.Authorization;
 using Iskra.Modules.Auth.Jobs;
 using Iskra.Modules.Auth.Options;
 using Iskra.Modules.Auth.Repositories;
 using Iskra.Modules.Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,6 +75,10 @@ public class AuthModule : IModule
                     }
                 };
             });
+
+        // Authorization (Permissions)
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         services.AddAuthorization();
     }

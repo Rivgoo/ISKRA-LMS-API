@@ -6,6 +6,8 @@
 /// </summary>
 public static class IskraPermissions
 {
+    public const string SystemFullAccess = "*";
+
     public static class Users
     {
         public const string Read = "users.read";
