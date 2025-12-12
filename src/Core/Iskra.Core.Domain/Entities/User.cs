@@ -42,15 +42,9 @@ public class User : AuditableEntity<Guid>
     /// </summary>
     public bool IsEmailConfirmed { get; set; } = false;
 
-    // --- Navigation Properties ---
 
     /// <summary>
     /// Roles assigned to this user.
     /// </summary>
     public ICollection<UserRole> UserRoles { get; set; } = [];
-
-    /// <summary>
-    /// Active sessions (refresh tokens) for this user.
-    /// </summary>
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

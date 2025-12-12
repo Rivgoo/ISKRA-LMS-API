@@ -52,6 +52,9 @@ public static class IskraBuilderExtensions
         // Configure CORS
         CorsConfigurator.ConfigureCors(builder.Services, securityOptions);
 
+        // Configure API Versioning
+        ApiVersioningExtensions.AddIskraApiVersioning(builder.Services);
+
         // Resolve Paths
         var absoluteRootPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PathConstants.ModulesRootPath));
 

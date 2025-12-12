@@ -80,31 +80,6 @@ namespace Iskra.Modules.MariaDb.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "refresh_tokens",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    token = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    expires_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
-                    is_revoked = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    created_by_ip = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_refresh_tokens", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_refresh_tokens_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "user_roles",
                 columns: table => new
                 {
@@ -129,10 +104,34 @@ namespace Iskra.Modules.MariaDb.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_refresh_tokens_user_id",
-                table: "refresh_tokens",
-                column: "user_id");
+            migrationBuilder.CreateTable(
+                name: "user_sessions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    refresh_token = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    expires_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    is_revoked = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ip_address = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    device_info = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    created_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    revoked_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_sessions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_sessions_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_roles_name",
@@ -146,6 +145,17 @@ namespace Iskra.Modules.MariaDb.Migrations
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_sessions_refresh_token",
+                table: "user_sessions",
+                column: "refresh_token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_sessions_user_id",
+                table: "user_sessions",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_users_email",
                 table: "users",
                 column: "email",
@@ -156,13 +166,13 @@ namespace Iskra.Modules.MariaDb.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "refresh_tokens");
-
-            migrationBuilder.DropTable(
                 name: "role_permissions");
 
             migrationBuilder.DropTable(
                 name: "user_roles");
+
+            migrationBuilder.DropTable(
+                name: "user_sessions");
 
             migrationBuilder.DropTable(
                 name: "roles");

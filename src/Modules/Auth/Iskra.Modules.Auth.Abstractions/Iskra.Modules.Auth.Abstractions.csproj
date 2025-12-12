@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Application\Iskra.Application.Abstractions\Iskra.Application.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Core\Iskra.Core.Domain\Iskra.Core.Domain.csproj" />
   </ItemGroup>
