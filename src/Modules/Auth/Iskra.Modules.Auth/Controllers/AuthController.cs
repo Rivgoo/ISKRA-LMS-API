@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
 using Iskra.Api.Abstractions.Extensions;
+using Iskra.Api.Abstractions.Models;
 using Iskra.Application.Errors;
 using Iskra.Application.Results;
 using Iskra.Modules.Auth.Abstractions.Errors;
-using Iskra.Modules.Auth.Abstractions.Models;
 using Iskra.Modules.Auth.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +33,7 @@ public class AuthController(
     [HttpPost("refresh")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Error), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Refresh(CancellationToken cancellationToken)
     {
         // 1. Validate Input (Cookie Presence)
@@ -43,7 +43,7 @@ public class AuthController(
             return Result.Bad(AuthErrors.MissingToken).ToActionResult();
 
         // 2. Extract Context Data
-        var deviceInfo = GetDeviceInfo();
+        var deviceInfo = HttpContext.GetDeviceInfo();
 
         // 3. Execute Logic
         var result = await sessionService.RefreshSessionAsync(refreshToken, deviceInfo, cancellationToken);
@@ -85,28 +85,11 @@ public class AuthController(
     [HttpPost("revoke-all-others")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(Error), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RevokeAllOthers(CancellationToken cancellationToken)
     {
         var result = await sessionService.TerminateAllOtherSessionsAsync(cancellationToken);
 
         return result.ToActionResult();
-    }
-
-    /// <summary>
-    /// Helper to extract IP and UserAgent from the request context.
-    /// </summary>
-    private DeviceInfo GetDeviceInfo()
-    {
-        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-        // Handle proxy headers (X-Forwarded-For) if behind Nginx/Cloudflare
-        if (HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
-            ipAddress = forwardedFor.FirstOrDefault();
-
-        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
-        if (string.IsNullOrEmpty(userAgent)) userAgent = "Unknown";
-
-        return new DeviceInfo(ipAddress, userAgent);
     }
 }

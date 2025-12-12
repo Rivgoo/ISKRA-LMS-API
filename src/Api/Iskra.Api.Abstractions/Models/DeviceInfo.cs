@@ -1,3 +1,3 @@
-﻿namespace Iskra.Modules.Auth.Abstractions.Models;
+﻿namespace Iskra.Api.Abstractions.Models;
 
 public record DeviceInfo(string? IpAddress, string? UserAgent);

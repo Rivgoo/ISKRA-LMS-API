@@ -22,7 +22,4 @@ public static class PasswordErrors
 
     public static Error InvalidFormat
         => Error.BadRequest("Password.InvalidFormat", "Password does not meet the complexity requirements.");
-
-    public static Error Mismatch
-        => Error.BadRequest("Password.Mismatch", "The provided password does not match the stored hash.");
 }

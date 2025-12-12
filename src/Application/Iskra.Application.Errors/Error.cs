@@ -21,7 +21,7 @@ public class Error
     /// <param name="description">A human-readable description of the error. Can be a format string if <paramref name="args"/> are provided.</param>
     /// <param name="errorType">The <see cref="ErrorType"/> categorizing the error.</param>
     /// <param name="args">Optional arguments to be formatted into the <paramref name="description"/> string.</param>
-    private Error(
+    protected Error(
         string code,
         string description,
         ErrorType errorType,
@@ -120,6 +120,16 @@ public class Error
     /// <returns>A new <see cref="Error"/> instance with <see cref="ErrorType.AccessForbidden"/>.</returns>
     public static Error AccessForbidden(string code, string description, params object[] args) =>
         new(code, description, ErrorType.AccessForbidden, args);
+
+    /// <summary>
+    /// Creates a new error representing a validation failure with the specified code and description.
+    /// </summary>
+    /// <param name="code">A string that uniquely identifies the type of validation error. Cannot be null or empty.</param>
+    /// <param name="description">A human-readable message describing the validation error. Cannot be null or empty.</param>
+    /// <returns>An <see cref="Error"/> instance representing a bad request validation error with the provided code and
+    /// description.</returns>
+    public static Error Validation(string code, string description) =>
+        new(code, description, ErrorType.BadRequest);
 
     /// <summary>
     /// Maps the current <see cref="ErrorType"/> to its corresponding <see cref="HttpStatusCode"/>.

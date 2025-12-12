@@ -28,6 +28,8 @@
   </Folder>
   <Folder Name="/src/Modules/Auth/">
     <Project Path="src/Modules/Auth/Iskra.Modules.Auth.Abstractions/Iskra.Modules.Auth.Abstractions.csproj" Id="0d7a3a49-b2f4-4b76-8079-2540a8472f9f" />
+    <Project Path="src/Modules/Auth/Iskra.Modules.Auth.Password.Abstractions/Iskra.Modules.Auth.Password.Abstractions.csproj" Id="c9a3ae34-a56c-4d86-9f84-76bf0f9172d8" />
+    <Project Path="src/Modules/Auth/Iskra.Modules.Auth.Password/Iskra.Modules.Auth.Password.csproj" Id="fee675b8-425c-4352-bef7-314c5cea3ac8" />
     <Project Path="src/Modules/Auth/Iskra.Modules.Auth/Iskra.Modules.Auth.csproj" Id="0096f3cd-630f-45df-9bf4-a86825716775" />
   </Folder>
   <Folder Name="/src/Modules/Users/">

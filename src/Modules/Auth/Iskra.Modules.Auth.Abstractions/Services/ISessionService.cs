@@ -1,5 +1,5 @@
-﻿using Iskra.Application.Results;
-using Iskra.Modules.Auth.Abstractions.Models;
+﻿using Iskra.Api.Abstractions.Models;
+using Iskra.Application.Results;
 
 namespace Iskra.Modules.Auth.Abstractions.Services;
 

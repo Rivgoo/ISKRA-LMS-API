@@ -1,9 +1,9 @@
-﻿using Iskra.Application.Abstractions.Repositories;
+﻿using Iskra.Api.Abstractions.Models;
+using Iskra.Application.Abstractions.Repositories;
 using Iskra.Application.Errors;
 using Iskra.Application.Results;
 using Iskra.Core.Domain.Entities;
 using Iskra.Modules.Auth.Abstractions.Errors;
-using Iskra.Modules.Auth.Abstractions.Models;
 using Iskra.Modules.Auth.Abstractions.Repositories;
 using Iskra.Modules.Auth.Abstractions.Services;
 using Iskra.Modules.Auth.Options;

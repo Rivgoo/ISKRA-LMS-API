@@ -38,7 +38,7 @@ public static class ResultToActionResultExtensions
     /// <summary>
     /// Private helper to standardize error response structure.
     /// </summary>
-    private static IActionResult ToErrorActionResult(this Result result)
+    private static ObjectResult ToErrorActionResult(this Result result)
     {
         var error = result.Error ?? Error.Failure("Unknown.Error", "An unknown error occurred.");
 
@@ -49,6 +49,18 @@ public static class ResultToActionResultExtensions
             Detail = error.Description,
             Type = error.ErrorType.ToString()
         };
+
+        if (error is ValidationError validationError)
+        {
+            var groupedErrors = validationError.Errors
+                .GroupBy(e => e.Code)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.Description).ToArray()
+                );
+
+            problemDetails.Extensions.Add("errors", groupedErrors);
+        }
 
         return new ObjectResult(problemDetails)
         {
