@@ -3,6 +3,9 @@
 		<RootBuildDir>$(MSBuildThisFileDirectory)build\</RootBuildDir>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- Suppress "Missing XML comment" warnings -->
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<!-- Host -->

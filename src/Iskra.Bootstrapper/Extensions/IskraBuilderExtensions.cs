@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HostFiltering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace Iskra.Bootstrapper.Extensions;
 
@@ -73,11 +74,14 @@ public static class IskraBuilderExtensions
         var loadedModules = ModuleLoader.LoadModules(absoluteRootPath, allModules, loggerFactory);
 
         // Register Services
+        var mvcBuilder = builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
         foreach (var module in loadedModules)
         {
             module.RegisterServices(builder.Services, builder.Configuration, loggerFactory);
-            // Add Controllers from Module Assembly
-            builder.Services.AddControllers().AddApplicationPart(module.Assembly);
+            mvcBuilder.AddApplicationPart(module.Assembly);
         }
 
         return new IskraEngine(loadedModules, environment, securityOptions);

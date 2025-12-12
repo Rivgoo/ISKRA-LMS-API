@@ -13,7 +13,7 @@ namespace Iskra.Modules.Users;
 
 public class UsersModule : IModule
 {
-    public string Name => "Modules.Users";
+    public string Name => "Iskra.Modules.Users";
     public int Priority => 10;
     public Assembly Assembly => Assembly.GetExecutingAssembly();
 
