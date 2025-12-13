@@ -181,11 +181,11 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_revoked");
 
-                    b.Property<string>("RefreshToken")
+                    b.Property<string>("RefreshTokenHash")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("refresh_token");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("refresh_token_hash");
 
                     b.Property<DateTimeOffset?>("RevokedAt")
                         .HasColumnType("datetime(6)")
@@ -197,7 +197,7 @@ namespace Iskra.Modules.MariaDb.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RefreshToken")
+                    b.HasIndex("RefreshTokenHash")
                         .IsUnique();
 
                     b.HasIndex("UserId");

@@ -6,9 +6,9 @@ namespace Iskra.Modules.Auth.Abstractions.Repositories;
 public interface IUserSessionRepository : IEntityOperations<UserSession, Guid>
 {
     /// <summary>
-    /// Retrieves a session by the refresh token string.
+    /// Retrieves a session by the HASH of the refresh token.
     /// </summary>
-    Task<UserSession?> GetByTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
+    Task<UserSession?> GetByHashAsync(string refreshTokenHash, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Revokes (terminates) a specific session.

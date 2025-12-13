@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -108,7 +109,7 @@ namespace Iskra.Modules.MariaDb.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    refresh_token = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
+                    refresh_token_hash = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     expires_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     is_revoked = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -144,9 +145,9 @@ namespace Iskra.Modules.MariaDb.Migrations
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_sessions_refresh_token",
+                name: "IX_user_sessions_refresh_token_hash",
                 table: "user_sessions",
-                column: "refresh_token",
+                column: "refresh_token_hash",
                 unique: true);
 
             migrationBuilder.CreateIndex(

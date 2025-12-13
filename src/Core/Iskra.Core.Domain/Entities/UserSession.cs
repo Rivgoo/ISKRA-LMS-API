@@ -9,10 +9,11 @@ namespace Iskra.Core.Domain.Entities;
 public class UserSession : BaseEntity<Guid>
 {
     /// <summary>
-    /// The opaque refresh token string used to obtain new access tokens.
-    /// Should be hashed or encrypted in a high-security environment, but raw is acceptable for now if DB is secure.
+    /// The HASH of the refresh token.
+    /// The raw token is sent to the client and never stored in the database.
+    /// This prevents session hijacking if the database is leaked.
     /// </summary>
-    public string RefreshToken { get; set; } = string.Empty;
+    public string RefreshTokenHash { get; set; } = string.Empty;
 
     /// <summary>
     /// When the refresh token expires.

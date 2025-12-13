@@ -9,9 +9,9 @@ namespace Iskra.Modules.Auth.Repositories;
 internal sealed class UserSessionRepository(AppDbContextBase dbContext)
     : EntityRepository<UserSession, Guid>(dbContext), IUserSessionRepository
 {
-    public async Task<UserSession?> GetByTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<UserSession?> GetByHashAsync(string refreshTokenHash, CancellationToken cancellationToken = default)
     {
-        return await Entities.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken, cancellationToken);
+        return await Entities.FirstOrDefaultAsync(s => s.RefreshTokenHash == refreshTokenHash, cancellationToken);
     }
 
     public async Task RevokeAsync(Guid sessionId, CancellationToken cancellationToken = default)

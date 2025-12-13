@@ -12,9 +12,9 @@ internal class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 
         builder.HasKey(s => s.Id);
 
-        builder.Property(s => s.RefreshToken)
+        builder.Property(s => s.RefreshTokenHash)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(256);
 
         builder.Property(s => s.IpAddress)
             .HasMaxLength(45);
@@ -27,6 +27,6 @@ internal class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(s => s.RefreshToken).IsUnique();
+        builder.HasIndex(s => s.RefreshTokenHash).IsUnique();
     }
 }
