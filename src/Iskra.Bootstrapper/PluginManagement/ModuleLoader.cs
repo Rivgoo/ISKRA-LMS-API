@@ -1,4 +1,5 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
+using Iskra.Core.Contracts.Constants;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
@@ -9,27 +10,23 @@ namespace Iskra.Bootstrapper.PluginManagement;
 /// </summary>
 internal class ModuleLoader
 {
-    public static List<IModule> LoadModules(
-        string rootPath, string[] modulesToLoad, ILoggerFactory loggerFactory)
+    public static List<IModule> LoadModules(string[] modulesToLoad, ILoggerFactory loggerFactory)
     {
         var loadedModules = new List<IModule>();
         var logger = loggerFactory.CreateLogger<ModuleLoader>();
 
-        string absolutePath = Path.IsPathRooted(rootPath)
-            ? rootPath
-            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, rootPath);
+        var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        var modulesDir = Path.Combine(baseDir, PathConstants.ModulesRootPath);
 
-        absolutePath = Path.GetFullPath(absolutePath);
-
-        if (!Directory.Exists(absolutePath))
+        if (!Directory.Exists(modulesDir))
         {
-            logger.LogWarning("Plugin directory '{PluginDirectory}' does not exist.", absolutePath);
+            logger.LogWarning("Plugin directory '{PluginDirectory}' does not exist.", modulesDir);
             return loadedModules;
         }
 
         foreach (var moduleName in modulesToLoad)
         {
-            var module = TryLoadModule(moduleName, absolutePath, logger);
+            var module = TryLoadModule(moduleName, modulesDir, logger);
             if (module != null)
             {
                 loadedModules.Add(module);

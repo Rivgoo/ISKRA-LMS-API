@@ -56,11 +56,8 @@ public static class IskraBuilderExtensions
         // Configure API Versioning
         ApiVersioningExtensions.AddIskraApiVersioning(builder.Services);
 
-        // Resolve Paths
-        var absoluteRootPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PathConstants.ModulesRootPath));
-
         // Initialize Assembly Resolver
-        AssemblyResolver.Initialize(absoluteRootPath, loggerFactory.CreateLogger<AssemblyResolver>());
+        AssemblyResolver.Initialize(loggerFactory.CreateLogger<AssemblyResolver>());
 
         // Read Configuration
         var pluginSettings = builder.Configuration.GetSection("PluginSettings");
@@ -71,7 +68,7 @@ public static class IskraBuilderExtensions
 
         // Load Modules
         var environment = builder.Environment.EnvironmentName;
-        var loadedModules = ModuleLoader.LoadModules(absoluteRootPath, allModules, loggerFactory);
+        var loadedModules = ModuleLoader.LoadModules(allModules, loggerFactory);
 
         // Register Services
         var mvcBuilder = builder.Services.AddControllers()

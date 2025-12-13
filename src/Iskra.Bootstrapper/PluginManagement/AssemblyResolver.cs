@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Iskra.Core.Contracts.Constants;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace Iskra.Bootstrapper.PluginManagement;
@@ -7,7 +8,7 @@ namespace Iskra.Bootstrapper.PluginManagement;
 /// Handles the resolution of assemblies that are not found in the host's base directory.
 /// Redirects the runtime to look into the Modules directory.
 /// </summary>
-internal  class AssemblyResolver
+internal class AssemblyResolver
 {
     private static string? _modulesDirectory;
     private static bool _isInitialized;
@@ -16,10 +17,12 @@ internal  class AssemblyResolver
     /// <summary>
     /// Initializes the resolver and subscribes to the AppDomain.AssemblyResolve event.
     /// </summary>
-    /// <param name="modulesDirectory">The absolute path to the directory containing module DLLs.</param>
-    public static void Initialize(string modulesDirectory, ILogger<AssemblyResolver> logger)
+    public static void Initialize(ILogger<AssemblyResolver> logger)
     {
         if (_isInitialized) return;
+
+        var modulesDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+            PathConstants.ModulesRootPath));
 
         _logger = logger;
 

@@ -6,14 +6,7 @@ public static class DesignTimeAssemblyLoader
 {
     public static void LoadModules()
     {
-        var rootDir = FindSolutionRoot(Directory.GetCurrentDirectory());
-        if (rootDir == null)
-        {
-            Console.WriteLine("Warning: Solution root not found.");
-            return;
-        }
-
-        var modulesPath = Path.Combine(rootDir, "build", "Modules");
+        var modulesPath = FindModulesDirectory();
 
         if (!Directory.Exists(modulesPath))
         {
@@ -38,17 +31,23 @@ public static class DesignTimeAssemblyLoader
         }
     }
 
-    private static string? FindSolutionRoot(string path)
+    private static string? FindModulesDirectory()
     {
-        var dir = new DirectoryInfo(path);
+        // 1. Check if we are running from the build output directly
+        var currentBase = AppDomain.CurrentDomain.BaseDirectory;
+        var localModules = Path.Combine(currentBase, "Modules");
+        if (Directory.Exists(localModules)) return localModules;
+
+        // 2. Recursive search upwards for the 'build/Modules' convention (Dev Environment)
+        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
         while (dir != null)
         {
-            // Look for the "build" folder or .sln file as anchor
-            if (Directory.Exists(Path.Combine(dir.FullName, "build")) || dir.GetFiles("*.sln").Length > 0)
-                return dir.FullName;
+            var target = Path.Combine(dir.FullName, "build", "Modules");
+            if (Directory.Exists(target)) return target;
 
             dir = dir.Parent;
         }
+
         return null;
     }
 }
