@@ -28,13 +28,13 @@ This license governs the use of the accompanying software. By downloading, acces
    B. NON-COMMERCIAL USE
       Unlimited use of the Software is permitted for Non-Commercial purposes (e.g., educational, non-profit, personal study) regardless of the number of Users.
 
-   C. LIMITED COMMERCIAL USE ("The 500-User Limit")
-      Commercial Use of the Software is permitted royalty-free PROVIDED THAT the total aggregate number of Users across all instances, forks, environments, or deployments owned, managed, or operated by the Licensee does not exceed 500 (five hundred).
+   C. LIMITED COMMERCIAL USE ("The 1000-User Limit")
+      Commercial Use of the Software is permitted royalty-free PROVIDED THAT the total aggregate number of Users across all instances, forks, environments, or deployments owned, managed, or operated by the Licensee does not exceed 1000 (one thousand).
       
       Splitting Users across multiple servers, databases, or instances to circumvent this limit is strictly prohibited and counts as a single aggregate total for the purpose of this License.
 
    D. ENTERPRISE THRESHOLD
-      If Licensee's Commercial usage exceeds 500 Users in aggregate, this License automatically terminates. Licensee must immediately obtain a Commercial Enterprise License from the Licensor to continue using the Software or any Derivative Work.
+      If Licensee's Commercial usage exceeds 1000 Users in aggregate, this License automatically terminates. Licensee must immediately obtain a Commercial Enterprise License from the Licensor to continue using the Software or any Derivative Work.
 
    E. LICENSE MODIFICATIONS
       Licensor reserves the right to update, modify, or revise this License at any time without prior notice. Continued use of the Software (including pulling updates or using newer versions) constitutes acceptance of the revised License terms.
