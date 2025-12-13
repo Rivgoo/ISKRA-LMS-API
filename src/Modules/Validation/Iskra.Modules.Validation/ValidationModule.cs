@@ -1,9 +1,8 @@
 ﻿using Iskra.Application.Abstractions.Validation;
 using Iskra.Core.Contracts.Abstractions;
 using Iskra.Core.Domain.Entities;
+using Iskra.Modules.Validation.Abstractions.Options.Users;
 using Iskra.Modules.Validation.Abstractions.Services;
-using Iskra.Modules.Validation.Emails;
-using Iskra.Modules.Validation.Passwords;
 using Iskra.Modules.Validation.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +16,7 @@ public class ValidationModule : IModule
 {
     public string Name => "Iskra.Modules.Validation";
 
-    public int Priority => 10;
+    public int Priority => 1;
 
     public Assembly Assembly => Assembly.GetExecutingAssembly();
 

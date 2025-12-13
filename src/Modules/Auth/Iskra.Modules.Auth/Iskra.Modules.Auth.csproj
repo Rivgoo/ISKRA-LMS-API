@@ -19,8 +19,8 @@
 		<ProjectReference Include="..\..\..\Application\Iskra.Application.Abstractions\Iskra.Application.Abstractions.csproj" />
 		<ProjectReference Include="..\..\..\Core\Iskra.Core.Contracts\Iskra.Core.Contracts.csproj" />
 		<ProjectReference Include="..\..\..\Core\Iskra.Core.Domain\Iskra.Core.Domain.csproj" />
-		<ProjectReference Include="..\..\..\Core\Iskra.Core.Permissions\Iskra.Core.Permissions.csproj" />
 		<ProjectReference Include="..\..\..\Infrastructure\Iskra.Infrastructure.Shared\Iskra.Infrastructure.Shared.csproj" />
+		<ProjectReference Include="..\..\Iskra.Modules.Iam.Abstractions\Iskra.Modules.Iam.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Users\Iskra.Modules.Users.Abstractions\Iskra.Modules.Users.Abstractions.csproj" />
 		<ProjectReference Include="..\Iskra.Modules.Auth.Abstractions\Iskra.Modules.Auth.Abstractions.csproj" />
 	</ItemGroup>

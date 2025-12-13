@@ -1,7 +1,5 @@
 ﻿using Asp.Versioning;
 using Iskra.Api.Abstractions.Extensions;
-using Iskra.Api.Abstractions.Models;
-using Iskra.Application.Errors;
 using Iskra.Application.Results;
 using Iskra.Modules.Auth.Abstractions.Errors;
 using Iskra.Modules.Auth.Abstractions.Services;

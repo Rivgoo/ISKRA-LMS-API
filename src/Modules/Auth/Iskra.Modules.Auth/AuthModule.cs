@@ -1,4 +1,5 @@
-﻿using Iskra.Core.Contracts.Abstractions;
+﻿using Iskra.Api.Abstractions.Services;
+using Iskra.Core.Contracts.Abstractions;
 using Iskra.Modules.Auth.Abstractions.Repositories;
 using Iskra.Modules.Auth.Abstractions.Services;
 using Iskra.Modules.Auth.Authorization;
@@ -21,7 +22,7 @@ namespace Iskra.Modules.Auth;
 public class AuthModule : IModule
 {
     public string Name => "Iskra.Modules.Auth";
-    public int Priority => 1;
+    public int Priority => 2;
 
     public Assembly Assembly => Assembly.GetExecutingAssembly();
 
@@ -37,6 +38,7 @@ public class AuthModule : IModule
         // 2. Register Core Services
         services.AddScoped<IUserSessionRepository, UserSessionRepository>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
 
         // Internal Services (Not exposed in Abstractions)
         services.AddScoped<JwtProvider>();
@@ -77,7 +79,7 @@ public class AuthModule : IModule
             });
 
         // Authorization (Permissions)
-        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         services.AddAuthorization();

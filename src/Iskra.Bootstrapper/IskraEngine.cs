@@ -2,7 +2,6 @@
 using Iskra.Bootstrapper.Security;
 using Iskra.Core.Contracts.Abstractions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 
 namespace Iskra.Bootstrapper;
 

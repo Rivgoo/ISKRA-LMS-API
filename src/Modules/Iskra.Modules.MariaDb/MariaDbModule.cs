@@ -1,5 +1,4 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
-using Iskra.Infrastructure.Persistence;
 using Iskra.Infrastructure.Shared;
 using Iskra.Infrastructure.Shared.Persistence;
 using Iskra.Modules.MariaDb.Persistence;

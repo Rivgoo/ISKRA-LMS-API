@@ -1,36 +1,17 @@
-﻿using Iskra.Core.Contracts.Constants;
-using Iskra.Core.Permissions;
+﻿using Iskra.Modules.Iam.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Iskra.Modules.Auth.Authorization;
 
-internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+internal sealed class PermissionAuthorizationHandler(IPermissionService permissionService)
+    : AuthorizationHandler<PermissionRequirement>
 {
-    protected override Task HandleRequirementAsync(
-        AuthorizationHandlerContext context,
-        PermissionRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        // 1. Check if user is authenticated at all
-        if (context.User.Identity is not { IsAuthenticated: true })
-            return Task.CompletedTask;
+        var roles = context.User.FindAll(ClaimTypes.Role).Select(c => c.Value);
 
-        // 2. Super Admin Check
-        if (context.User.HasClaim(c =>
-            c.Type == AuthConstants.PermissionsClaimType &&
-            c.Value == IskraPermissions.SystemFullAccess))
-        {
+        if (await permissionService.HasPermissionAsync(roles, requirement.Permission))
             context.Succeed(requirement);
-            return Task.CompletedTask;
-        }
-
-        // 3. Specific Permission Check
-        if (context.User.HasClaim(c =>
-            c.Type == AuthConstants.PermissionsClaimType &&
-            c.Value == requirement.Permission))
-        {
-            context.Succeed(requirement);
-        }
-
-        return Task.CompletedTask;
     }
 }

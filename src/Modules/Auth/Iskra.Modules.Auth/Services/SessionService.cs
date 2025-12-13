@@ -7,6 +7,7 @@ using Iskra.Modules.Auth.Abstractions.Errors;
 using Iskra.Modules.Auth.Abstractions.Repositories;
 using Iskra.Modules.Auth.Abstractions.Services;
 using Iskra.Modules.Auth.Options;
+using Iskra.Modules.Iam.Abstractions.Repositories;
 using Iskra.Modules.Users.Abstractions.Repositories;
 using Microsoft.Extensions.Options;
 
@@ -32,17 +33,14 @@ internal sealed class SessionService(
         if (user is null) return EntityErrors<User, Guid>.NotFoundById(userId);
         if (!user.IsActive) return AuthErrors.UserInactive;
 
-        // 2. Generate Tokens
+        if (_options.Security.RequireEmailConfirmation && !user.IsEmailConfirmed)
+            return AuthErrors.EmailNotConfirmed;
+
+        // 2. Generate Token with Roles
         var roles = await userRoleRepository.GetRolesForUserAsync(userId, ct);
-        var permissions = new HashSet<string>();
+        var roleNames = roles.Select(r => r.Name).ToList();
 
-        foreach (var role in roles)
-        {
-            var rolePerms = await permissionRepository.GetPermissionsForRoleAsync(role.Id, ct);
-            permissions.UnionWith(rolePerms);
-        }
-
-        var accessToken = jwtProvider.GenerateAccessToken(user, permissions);
+        var accessToken = jwtProvider.GenerateAccessToken(user, roleNames);
         var refreshTokenString = jwtProvider.GenerateRefreshTokenString();
 
         // 3. Create Session in DB

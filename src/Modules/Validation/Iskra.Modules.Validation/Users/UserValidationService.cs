@@ -2,6 +2,7 @@
 using Iskra.Application.Errors;
 using Iskra.Application.Results;
 using Iskra.Core.Domain.Entities;
+using Iskra.Modules.Validation.Abstractions.Options.Users;
 using Iskra.Modules.Validation.Abstractions.Services;
 using Microsoft.Extensions.Options;
 

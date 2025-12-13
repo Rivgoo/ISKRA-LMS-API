@@ -15,4 +15,7 @@ public static class AuthErrors
 
     public static Error MissingToken
         => Error.Unauthorized("Auth.MissingToken", "No authentication token provided.");
+
+    public static Error EmailNotConfirmed
+        => Error.Unauthorized("Auth.EmailNotConfirmed", "Please confirm your email address before logging in.");
 }

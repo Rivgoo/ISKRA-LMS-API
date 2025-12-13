@@ -1,5 +1,4 @@
-﻿using Iskra.Core.Contracts.Constants;
-using Iskra.Core.Domain.Entities;
+﻿using Iskra.Core.Domain.Entities;
 using Iskra.Modules.Auth.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +13,7 @@ internal sealed class JwtProvider(IOptions<AuthOptions> options)
 {
     private readonly JwtOptions _jwtOptions = options.Value.Jwt;
 
-    public string GenerateAccessToken(User user, IEnumerable<string> permissions)
+    public string GenerateAccessToken(User user, IEnumerable<string> roles)
     {
         var claims = new List<Claim>
         {
@@ -23,7 +22,7 @@ internal sealed class JwtProvider(IOptions<AuthOptions> options)
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        claims.AddRange(permissions.Select(p => new Claim(AuthConstants.PermissionsClaimType, p)));
+        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

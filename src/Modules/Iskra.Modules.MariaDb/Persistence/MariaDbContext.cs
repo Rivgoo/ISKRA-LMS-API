@@ -1,6 +1,5 @@
 ﻿using Iskra.Infrastructure.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Iskra.Modules.MariaDb.Persistence;
 
