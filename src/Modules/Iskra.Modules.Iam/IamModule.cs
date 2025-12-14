@@ -38,9 +38,6 @@ public class IamModule : IModule
         services.AddScoped<IValidator<CreateRoleRequest>, CreateRoleRequestValidator>();
         services.AddScoped<IValidator<UpdateRoleRequest>, UpdateRoleRequestValidator>();
         services.AddScoped<IValidator<UpdateRolePermissionsRequest>, UpdateRolePermissionsRequestValidator>();
-
-        // 4. Caching
-        services.AddMemoryCache();
     }
 
     public void ConfigureMiddleware(WebApplication app)

@@ -1,12 +1,12 @@
-﻿using Iskra.Modules.Iam.Abstractions;
+﻿using Iskra.Application.Abstractions.Caching;
+using Iskra.Modules.Iam.Abstractions;
 using Iskra.Modules.Iam.Abstractions.Repositories;
 using Iskra.Modules.Iam.Abstractions.Services;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Iskra.Modules.Iam.Services;
 
 internal sealed class PermissionService(
-    IMemoryCache cache,
+    ICacheService cache,
     IRoleRepository roleRepository,
     IPermissionRepository permissionRepository
     ) : IPermissionService
@@ -18,14 +18,17 @@ internal sealed class PermissionService(
 
         foreach (var role in roleNames)
         {
-            var permissions = await cache.GetOrCreateAsync($"iam:permissions:{role}", async entry =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
-                var r = await roleRepository.GetByNameAsync(role, ct);
-                if (r == null) return [];
+            var permissions = await cache.GetOrCreateAsync(
+               $"iam:permissions:{role}",
+               async token =>
+               {
+                   var r = await roleRepository.GetByNameAsync(role, token);
+                   if (r == null) return [];
+                   return await permissionRepository.GetPermissionsForRoleAsync(r.Id, token);
+               },
 
-                return await permissionRepository.GetPermissionsForRoleAsync(r.Id, ct);
-            });
+               CacheEntryOptions.Absolute(TimeSpan.FromMinutes(30)),
+               ct);
 
             if (permissions != null) allPermissions.UnionWith(permissions);
         }
