@@ -1,15 +1,22 @@
 ﻿using Iskra.Application.Abstractions.Repositories;
 using Iskra.Core.Domain.Common;
+using Iskra.Infrastructure.Persistence.Repositories;
 using Iskra.Infrastructure.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Iskra.Infrastructure.Persistence.Repositories;
+namespace Iskra.Infrastructure.Shared.Repositories;
 
 /// <summary>
 /// A generic repository implementing standard IEntityOperations.
 /// </summary>
 public abstract class EntityRepository<TEntity, TId>(AppDbContextBase dbContext)
-    : Repository<TEntity>(dbContext), IEntityOperations<TEntity, TId>
+    : Repository<TEntity>(dbContext),
+    IAddOperations<TEntity>,
+    IAddRangeOperations<TEntity>,
+    IGetOperations<TEntity, TId>,
+    IExistsByIdOperations<TId>,
+    IUpdateOperations<TEntity>,
+    IDeleteOperations<TEntity>
     where TEntity : class, IBaseEntity<TId>
     where TId : notnull, IComparable<TId>
 {

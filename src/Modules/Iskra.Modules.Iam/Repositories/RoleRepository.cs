@@ -1,6 +1,6 @@
 ﻿using Iskra.Core.Domain.Entities;
-using Iskra.Infrastructure.Persistence.Repositories;
 using Iskra.Infrastructure.Shared.Persistence;
+using Iskra.Infrastructure.Shared.Repositories;
 using Iskra.Modules.Iam.Abstractions.Models;
 using Iskra.Modules.Iam.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
