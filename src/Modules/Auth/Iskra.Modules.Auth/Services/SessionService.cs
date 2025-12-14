@@ -49,17 +49,14 @@ internal sealed class SessionService(
         // Hashed token for the Database
         var refreshTokenHash = HashToken(rawRefreshToken);
 
-        // 3. Create Session in DB (Store Hash)
-        var session = new UserSession
-        {
-            Id = Guid.NewGuid(),
-            UserId = userId,
-            RefreshTokenHash = refreshTokenHash,
-            IpAddress = device.IpAddress,
-            DeviceInfo = device.UserAgent,
-            ExpiresAt = DateTimeOffset.UtcNow.AddDays(_options.Jwt.RefreshTokenExpirationDays),
-            IsRevoked = false
-        };
+        // 3. Create Session in DB
+        var session = UserSession.Create(
+             userId,
+             refreshTokenHash,
+             device.IpAddress,
+             device.UserAgent,
+             _options.Jwt.RefreshTokenExpirationDays
+         );
 
         sessionRepository.Add(session);
         await unitOfWork.SaveChangesAsync(ct);

@@ -7,9 +7,24 @@ namespace Iskra.Core.Domain.Entities;
 /// </summary>
 public class UserRole : IEntity
 {
-    public Guid UserId { get; set; }
-    public User? User { get; set; }
+    // Required by EF Core
+    private UserRole() { }
 
-    public Guid RoleId { get; set; }
-    public Role? Role { get; set; }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserRole"/> class.
+    /// </summary>
+    public UserRole(Guid userId, Guid roleId)
+    {
+        Guard.NotEmpty(userId);
+        Guard.NotEmpty(roleId);
+
+        UserId = userId;
+        RoleId = roleId;
+    }
+
+    public Guid UserId { get; private set; }
+    public User? User { get; private set; }
+
+    public Guid RoleId { get; private set; }
+    public Role? Role { get; private set; }
 }

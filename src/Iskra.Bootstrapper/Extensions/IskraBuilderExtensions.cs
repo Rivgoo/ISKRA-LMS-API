@@ -1,4 +1,5 @@
-﻿using Iskra.Bootstrapper.Options;
+﻿using Iskra.Bootstrapper.Middleware;
+using Iskra.Bootstrapper.Options;
 using Iskra.Bootstrapper.PluginManagement;
 using Iskra.Bootstrapper.Security;
 using Iskra.Core.Contracts.Constants;
@@ -36,6 +37,10 @@ public static class IskraBuilderExtensions
         var securityOptions = securitySection.Get<SecurityOptions>() ?? throw new InvalidOperationException("Failed to bind SecurityOptions from configuration.");
 
         builder.Services.Configure<SecurityOptions>(securitySection);
+
+        // Register Global Exception Handler
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
 
         // Configure Host Filtering
         var hostConfig = securityOptions.HostFiltering;

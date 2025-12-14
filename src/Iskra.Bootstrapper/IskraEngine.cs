@@ -31,7 +31,10 @@ public class IskraEngine
     /// </summary>
     public void UseIskra(WebApplication app)
     {
-        // 1. Apply AllowedHosts
+        // Global Exception Handler
+        app.UseExceptionHandler();
+
+        // Apply AllowedHosts
         app.UseHostFiltering();
 
         // Apply CORS

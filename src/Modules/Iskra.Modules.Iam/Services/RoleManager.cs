@@ -23,13 +23,7 @@ internal sealed class RoleManager(
         if (existing != null)
             return Result<Role>.Bad(RoleErrors.AlreadyExists(request.Name));
 
-        var role = new Role
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name,
-            Description = request.Description,
-            IsSystem = false
-        };
+        var role = new Role(request.Name, request.Description, isSystem: false);
 
         roleRepository.Add(role);
 
@@ -66,10 +60,12 @@ internal sealed class RoleManager(
             if (existingName != null && existingName.Id != roleId)
                 return RoleErrors.AlreadyExists(request.Name);
 
-            role.Name = request.Name;
+            role.UpdateDetails(request.Name, request.Description);
         }
-
-        role.Description = request.Description;
+        else
+        {
+            role.UpdateDetails(role.Name, request.Description);
+        }
 
         roleRepository.Update(role);
         await unitOfWork.SaveChangesAsync(ct);

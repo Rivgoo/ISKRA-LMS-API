@@ -32,7 +32,7 @@ internal sealed class UserRoleService(
             return UserRoleErrors.AlreadyAssigned(roleName);
 
         // 4. Assign
-        var userRole = new UserRole { UserId = userId, RoleId = role.Id };
+        var userRole = new UserRole(userId, role.Id);
         userRoleRepository.Add(userRole);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -56,7 +56,7 @@ internal sealed class UserRoleService(
             return UserRoleErrors.NotAssigned(roleName);
 
         // 4. Revoke
-        var userRole = new UserRole { UserId = userId, RoleId = role.Id };
+        var userRole = new UserRole(userId, role.Id);
         userRoleRepository.Remove(userRole);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

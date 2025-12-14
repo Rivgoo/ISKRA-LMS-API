@@ -26,7 +26,7 @@ internal sealed class PermissionRepository(AppDbContextBase dbContext)
 
         var entitiesToAdd = newPermissions
             .Distinct()
-            .Select(p => new RolePermission { RoleId = roleId, Permission = p });
+            .Select(p => new RolePermission(roleId, p));
 
         Entities.AddRange(entitiesToAdd);
 

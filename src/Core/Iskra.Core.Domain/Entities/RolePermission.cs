@@ -7,12 +7,26 @@ namespace Iskra.Core.Domain.Entities;
 /// </summary>
 public class RolePermission : IEntity
 {
-    public Guid RoleId { get; set; }
-    public Role? Role { get; set; }
+    // Required by EF Core
+    private RolePermission() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RolePermission"/> class.
+    /// </summary>
+    public RolePermission(Guid roleId, string permission)
+    {
+        Guard.NotEmpty(roleId);
+        Guard.NotNullOrWhiteSpace(permission);
+
+        RoleId = roleId;
+        Permission = permission;
+    }
+
+    public Guid RoleId { get; private set; }
+    public Role? Role { get; private set; }
 
     /// <summary>
     /// The permission string (e.g., "users.read").
-    /// Validated against Iskra.Core.Permissions.
     /// </summary>
-    public string Permission { get; set; } = string.Empty;
+    public string Permission { get; private set; } = string.Empty;
 }

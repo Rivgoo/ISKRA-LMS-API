@@ -54,13 +54,7 @@ internal sealed class IdentitySeeder(
             {
                 logger.LogInformation("Creating Role: {RoleName} (System: {IsSystem})", seedRole.Name, seedRole.IsSystem);
 
-                var newRole = new Role
-                {
-                    Id = Guid.NewGuid(),
-                    Name = seedRole.Name,
-                    Description = seedRole.Description,
-                    IsSystem = seedRole.IsSystem
-                };
+                var newRole = new Role(seedRole.Name, seedRole.Description, seedRole.IsSystem);
 
                 roleRepository.Add(newRole);
 
@@ -94,20 +88,19 @@ internal sealed class IdentitySeeder(
 
             logger.LogInformation("Creating Seed User: {Email}", seedUser.Email);
 
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = seedUser.Email,
-                FirstName = seedUser.FirstName,
-                LastName = seedUser.LastName,
-                IsActive = true,
-                IsEmailConfirmed = true, // Auto-confirm seeded admins
-                PasswordHash = passwordHasher.Hash(seedUser.Password)
-            };
+            var user = User.Create(
+                seedUser.Email,
+                seedUser.FirstName,
+                seedUser.LastName,
+                null,
+                passwordHasher.Hash(seedUser.Password),
+                true // IsEmailConfirmed
+            );
+
 
             userRepository.Add(user);
 
-            userRoleRepository.Add(new UserRole { UserId = user.Id, RoleId = role.Id });
+            userRoleRepository.Add(new UserRole(user.Id, role.Id));
         }
 
         await unitOfWork.SaveChangesAsync(ct);

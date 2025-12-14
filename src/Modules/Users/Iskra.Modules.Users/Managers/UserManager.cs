@@ -54,17 +54,14 @@ internal sealed class UserManager(
             : passwordHasher.Hash(request.Password);
 
         // 5. Create Entity
-        var newUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = request.Email,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            MiddleName = request.MiddleName,
-            PasswordHash = passwordHash,
-            IsActive = true,
-            IsEmailConfirmed = request.IsEmailConfirmed
-        };
+        var newUser = User.Create(
+            request.Email,
+            request.FirstName,
+            request.LastName,
+            request.MiddleName,
+            passwordHash,
+            request.IsEmailConfirmed
+        );
 
         var createResult = await userEntityService.CreateAsync(newUser, ct);
         if (createResult.IsFailure)
@@ -92,9 +89,7 @@ internal sealed class UserManager(
         if (userResult.IsFailure) return userResult.ToValue<Result>();
 
         var user = userResult.Value!;
-        user.FirstName = request.FirstName;
-        user.LastName = request.LastName;
-        user.MiddleName = request.MiddleName;
+        user.UpdateProfile(request.FirstName, request.LastName, request.MiddleName);
 
         return await userEntityService.UpdateAsync(user, ct);
     }
