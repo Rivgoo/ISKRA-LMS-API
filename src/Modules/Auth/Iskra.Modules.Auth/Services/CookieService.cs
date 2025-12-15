@@ -1,13 +1,15 @@
 ﻿using Iskra.Modules.Auth.Abstractions.Services;
 using Iskra.Modules.Auth.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Iskra.Modules.Auth.Services;
 
 internal sealed class CookieService(
     IHttpContextAccessor httpContextAccessor,
-    IOptions<AuthOptions> options) : ICookieService
+    IOptions<AuthOptions> options,
+    IHostEnvironment environment) : ICookieService
 {
     private readonly AuthOptions _options = options.Value;
 
@@ -17,9 +19,13 @@ internal sealed class CookieService(
         if (context is null) return;
 
         var settings = _options.Cookies;
-        var sameSite = Enum.Parse<SameSiteMode>(settings.SameSite);
 
-        bool isPersistent = settings.UsePersistentCookies;
+        var isSecure = settings.Secure;
+
+        if (environment.IsProduction() && !isSecure)
+            throw new InvalidOperationException("In Production environment, cookies must be set as Secure.");
+
+        var sameSite = Enum.Parse<SameSiteMode>(settings.SameSite);
 
         // 1. Access Token (Short Lived)
         AppendCookie(context, settings.AccessTokenName, accessToken, new CookieOptions
@@ -38,7 +44,7 @@ internal sealed class CookieService(
             SameSite = sameSite
         };
 
-        if (isPersistent)
+        if (settings.UsePersistentCookies)
             refreshOptions.Expires = DateTime.UtcNow.AddDays(_options.Jwt.RefreshTokenExpirationDays);
 
         AppendCookie(context, settings.RefreshTokenName, refreshToken, refreshOptions);
