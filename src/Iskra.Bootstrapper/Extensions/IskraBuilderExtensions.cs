@@ -2,6 +2,7 @@
 using Iskra.Bootstrapper.Options;
 using Iskra.Bootstrapper.PluginManagement;
 using Iskra.Bootstrapper.Security;
+using Iskra.Bootstrapper.Security.Sanitization;
 using Iskra.Core.Contracts.Constants;
 using Iskra.Shared.CustomConsoleFormatter.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Iskra.Bootstrapper.Extensions;
 
@@ -78,10 +80,21 @@ public static class IskraBuilderExtensions
         var environment = builder.Environment.EnvironmentName;
         var loadedModules = ModuleLoader.LoadModules(allModules, loggerFactory);
 
+        // Configure JSON Sanitization
+        var sanitizationModifier = SanitizationJsonResolver.CreateModifier(securityOptions.Sanitization);
+
         // Register Services
         var mvcBuilder = builder.Services.AddControllers()
             .AddJsonOptions(options =>
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+                if (securityOptions.Sanitization.Enabled)
+                    options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+                    {
+                        Modifiers = { sanitizationModifier }
+                    };
+            });
 
         foreach (var module in loadedModules)
         {

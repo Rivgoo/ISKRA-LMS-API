@@ -9,4 +9,5 @@ public class SecurityOptions
     public CorsOptions Cors { get; set; } = new();
     public RateLimitingOptions RateLimiting { get; set; } = new();
     public SecurityHeadersOptions Headers { get; set; } = new();
+    public SanitizationOptions Sanitization { get; set; } = new();
 }
