@@ -2,6 +2,7 @@
 using Iskra.Core.Contracts.Constants;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Iskra.Bootstrapper.PluginManagement;
 
@@ -17,6 +18,8 @@ internal class ModuleLoader
 
         var baseDir = AppDomain.CurrentDomain.BaseDirectory;
         var modulesDir = Path.Combine(baseDir, PathConstants.ModulesRootPath);
+
+        GlobalModuleResolver.Initialize(loggerFactory.CreateLogger(nameof(GlobalModuleResolver)));
 
         if (!Directory.Exists(modulesDir))
         {
@@ -51,7 +54,7 @@ internal class ModuleLoader
             if (!File.Exists(dllPath))
                 throw new FileNotFoundException($"Module DLL not found: {dllPath}");
 
-            var assembly = Assembly.LoadFrom(dllPath);
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dllPath);
 
             var moduleType = assembly.GetTypes()
                 .FirstOrDefault(t => typeof(IModule).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);

@@ -37,7 +37,7 @@ public class Result
     /// Initializes a new instance of the <see cref="Result"/> class representing a result with a specific success status and potentially an error.
     /// </summary>
     /// <remarks>
-    /// If <paramref name="isSuccess"/> is true, the <paramref name="error"/> should ideally be null or <see cref="Error.None"/>.
+    /// If <paramref name="isSuccess"/> is true, the <paramref name="error"/> should ideally be null/>.
     /// If <paramref name="isSuccess"/> is false, the <paramref name="error"/> should represent the reason for failure.
     /// </remarks>
     /// <param name="isSuccess">A value indicating whether the result is successful.</param>
@@ -70,7 +70,7 @@ public class Result
     /// Gets the error associated with the result, if any.
     /// </summary>
     /// <value>
-    /// The <see cref="Error"/> instance if <see cref="IsFailure"/> is true; otherwise, null or <see cref="Error.None"/>.
+    /// The <see cref="Error"/> instance if <see cref="IsFailure"/> is true/>.
     /// </value>
     /// <remarks>
     /// This property is ignored during JSON serialization if its value is default (null for reference types).

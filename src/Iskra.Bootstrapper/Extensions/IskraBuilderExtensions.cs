@@ -66,9 +66,6 @@ public static class IskraBuilderExtensions
         // Configure API Versioning
         ApiVersioningExtensions.AddIskraApiVersioning(builder.Services);
 
-        // Initialize Assembly Resolver
-        AssemblyResolver.Initialize(loggerFactory.CreateLogger<AssemblyResolver>());
-
         // Read Configuration
         var pluginSettings = builder.Configuration.GetSection("PluginSettings");
         var enabledModules = pluginSettings.GetSection("EnabledModules").Get<string[]>() ?? [];
