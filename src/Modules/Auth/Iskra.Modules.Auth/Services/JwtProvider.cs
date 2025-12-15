@@ -38,11 +38,20 @@ internal sealed class JwtProvider(IOptions<AuthOptions> options)
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    /// <summary>
+    /// Generates a cryptographically secure random token.
+    /// Uses 64 bytes (512 bits) of entropy and converts to a Hex string.
+    /// </summary>
     public string GenerateRefreshTokenString()
     {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
+        // Allocate on stack to avoid GC pressure for short-lived buffer
+        Span<byte> randomNumber = stackalloc byte[64];
+
+        // Use the system's CSPRNG (Cryptographically Secure Pseudo-Random Number Generator)
+        RandomNumberGenerator.Fill(randomNumber);
+
+        // Convert to Hex String (e.g., "A1B2C3...")
+        // Length will be 128 characters (2 chars per byte)
+        return Convert.ToHexString(randomNumber);
     }
 }
