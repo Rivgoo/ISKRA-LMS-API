@@ -6,6 +6,7 @@ using Iskra.Modules.Auth.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Iskra.Modules.Auth.Controllers;
 
@@ -13,6 +14,7 @@ namespace Iskra.Modules.Auth.Controllers;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
 [Produces("application/json")]
+[EnableRateLimiting("AuthPolicy")]
 public class AuthController(
     ISessionService sessionService,
     ICookieService cookieService) : ControllerBase

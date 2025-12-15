@@ -40,6 +40,10 @@ public class IskraEngine
         // Apply CORS
         CorsConfigurator.UseConfiguredCors(app, _securityOptions);
 
+        // Rate Limiting
+        if (_securityOptions.RateLimiting.Enabled)
+            app.UseRateLimiter();
+
         // Sort by Priority
         var sortedModules = _loadedModules.OrderBy(x => x.Priority).ToList();
 

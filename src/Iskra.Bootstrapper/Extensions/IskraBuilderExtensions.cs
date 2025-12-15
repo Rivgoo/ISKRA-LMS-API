@@ -58,6 +58,9 @@ public static class IskraBuilderExtensions
         // Configure CORS
         CorsConfigurator.ConfigureCors(builder.Services, securityOptions);
 
+        // Configure Rate Limiting
+        RateLimitingExtensions.AddIskraRateLimiting(builder.Services, securityOptions);
+
         // Configure API Versioning
         ApiVersioningExtensions.AddIskraApiVersioning(builder.Services);
 
