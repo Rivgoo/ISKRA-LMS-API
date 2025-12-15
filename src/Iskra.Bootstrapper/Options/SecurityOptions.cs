@@ -8,4 +8,5 @@ public class SecurityOptions
     public HostFilteringConfig HostFiltering { get; set; } = new();
     public CorsOptions Cors { get; set; } = new();
     public RateLimitingOptions RateLimiting { get; set; } = new();
+    public SecurityHeadersOptions Headers { get; set; } = new();
 }

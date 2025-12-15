@@ -1,7 +1,9 @@
-﻿using Iskra.Bootstrapper.Options;
+﻿using Iskra.Bootstrapper.Middleware;
+using Iskra.Bootstrapper.Options;
 using Iskra.Bootstrapper.Security;
 using Iskra.Core.Contracts.Abstractions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 namespace Iskra.Bootstrapper;
 
@@ -33,6 +35,14 @@ public class IskraEngine
     {
         // Global Exception Handler
         app.UseExceptionHandler();
+
+        // HSTS (Strict Transport Security)
+        // Enforce HTTPS in Production. Browsers will refuse to connect via HTTP for the next 365 days.
+        if (app.Environment.IsProduction())
+            app.UseHsts();
+
+        // Security Headers Middleware
+        app.UseMiddleware<SecurityHeadersMiddleware>();
 
         // Apply AllowedHosts
         app.UseHostFiltering();
