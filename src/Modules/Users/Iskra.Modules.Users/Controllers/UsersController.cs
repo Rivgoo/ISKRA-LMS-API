@@ -2,6 +2,7 @@
 using FluentValidation;
 using Iskra.Api.Abstractions.Authorization;
 using Iskra.Api.Abstractions.Extensions;
+using Iskra.Api.Abstractions.Responses;
 using Iskra.Api.Abstractions.Services;
 using Iskra.Application.Errors.DomainErrors;
 using Iskra.Application.Results;
@@ -32,9 +33,10 @@ public class UsersController(
     /// </summary>
     [HttpPost]
     [HasPermission(IskraPermissions.Users.Create)]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IdResponse<Guid>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] RegisterUserRequest request, CancellationToken ct)
     {
         var validation = await registerValidator.ValidateAsync(request, ct);
@@ -42,7 +44,13 @@ public class UsersController(
             return Result.Bad(validation.ToError()).ToActionResult();
 
         var result = await userManager.RegisterUserAsync(request, ct);
-        return result.ToActionResult();
+
+        return result.Match(id =>
+            CreatedAtAction(
+                nameof(UpdateProfile),
+                new { userId = id, version = "1" },
+                new IdResponse<Guid>(id))
+        );
     }
 
     /// <summary>
@@ -54,6 +62,7 @@ public class UsersController(
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateProfile(Guid userId, [FromBody] UpdateUserRequest request, CancellationToken ct)
     {
         if (!await currentUser.CanAccessAsync(userId, IskraPermissions.Users.Update))
@@ -75,6 +84,7 @@ public class UsersController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ChangePassword(Guid userId, [FromBody] ChangePasswordRequest request, CancellationToken ct)
     {
         if (currentUser.Id != userId)
@@ -95,6 +105,7 @@ public class UsersController(
     [HasPermission(IskraPermissions.Roles.ManageAssignments)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> AssignRole(Guid userId, string roleName, CancellationToken ct)
     {
         var result = await userManager.AssignRoleAsync(userId, roleName, ct);
@@ -108,6 +119,7 @@ public class UsersController(
     [HasPermission(IskraPermissions.Roles.ManageAssignments)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RevokeRole(Guid userId, string roleName, CancellationToken ct)
     {
         var result = await userManager.RevokeRoleAsync(userId, roleName, ct);
@@ -122,6 +134,7 @@ public class UsersController(
     [HasPermission(IskraPermissions.Users.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete(Guid userId, CancellationToken ct)
     {
         if (currentUser.Id == userId)

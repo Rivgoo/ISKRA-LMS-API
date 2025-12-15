@@ -2,6 +2,7 @@
 using FluentValidation;
 using Iskra.Api.Abstractions.Authorization;
 using Iskra.Api.Abstractions.Extensions;
+using Iskra.Api.Abstractions.Responses;
 using Iskra.Application.Results;
 using Iskra.Modules.Iam.Abstractions;
 using Iskra.Modules.Iam.Abstractions.Models;
@@ -29,6 +30,7 @@ public class RolesController(
     [HttpGet]
     [HasPermission(IskraPermissions.Roles.Read)]
     [ProducesResponseType(typeof(List<RoleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAll(CancellationToken ct)
     {
         var result = await roleManager.GetAllRolesAsync(ct);
@@ -42,6 +44,7 @@ public class RolesController(
     [HasPermission(IskraPermissions.Roles.Read)]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await roleManager.GetRoleByIdAsync(id, ct);
@@ -53,9 +56,10 @@ public class RolesController(
     /// </summary>
     [HttpPost]
     [HasPermission(IskraPermissions.Roles.Create)]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IdResponse<Guid>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateRoleRequest request, CancellationToken ct)
     {
         var validation = await createValidator.ValidateAsync(request, ct);
@@ -64,10 +68,12 @@ public class RolesController(
 
         var result = await roleManager.CreateRoleAsync(request, ct);
 
-        if (result.IsSuccess)
-            return Ok(result.Value!.Id);
-
-        return result.ToActionResult();
+        return result.Match(role =>
+            CreatedAtAction(
+                nameof(GetById),
+                new { id = role.Id, version = "1" },
+                new IdResponse<Guid>(role.Id))
+        );
     }
 
     /// <summary>
@@ -79,6 +85,7 @@ public class RolesController(
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRoleRequest request, CancellationToken ct)
     {
         var validation = await updateValidator.ValidateAsync(request, ct);
@@ -97,6 +104,7 @@ public class RolesController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await roleManager.DeleteRoleAsync(id, ct);
@@ -109,6 +117,7 @@ public class RolesController(
     [HttpGet("{id:guid}/permissions")]
     [HasPermission(IskraPermissions.Roles.Read)]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetPermissions(Guid id, CancellationToken ct)
     {
         var result = await roleManager.GetPermissionsAsync(id, ct);
@@ -122,6 +131,7 @@ public class RolesController(
     [HasPermission(IskraPermissions.Roles.ManageAssignments)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdatePermissions(Guid id, [FromBody] UpdateRolePermissionsRequest request, CancellationToken ct)
     {
         var validation = await permissionsValidator.ValidateAsync(request, ct);
@@ -139,6 +149,7 @@ public class RolesController(
     [HttpGet("system-permissions")]
     [HasPermission(IskraPermissions.Roles.Read)]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult GetAvailablePermissions()
     {
         var perms = PermissionDiscovery.GetAllPermissions();
