@@ -33,11 +33,11 @@ This project is licensed under the **Iskra Community License (ICL)**.
 | Use Case | Status | Condition |
 | :--- | :--- | :--- |
 | **Non-Commercial** | ✅ Free | Unlimited users (Education, Non-profit, Personal). |
-| **Small Business** | ✅ Free | Up to **500 active users** total. |
-| **Enterprise** | 💼 Paid | Required if you exceed 500 users. |
+| **Small Business** | ✅ Free | Up to **1000 active users** total. |
+| **Enterprise** | 💼 Paid | Required if you exceed 1000 users. |
 
 **Important:**
-1. **Forks & Derivatives:** If you modify this code, your version is still subject to the 500-user limit.
+1. **Forks & Derivatives:** If you modify this code, your version is still subject to the 1000-user limit.
 2. **No Loopholes:** Splitting users across multiple servers to bypass limits is prohibited.
 3. **Updates:** The author reserves the right to update license terms at any time.
 
