@@ -7,6 +7,7 @@ using Iskra.Modules.Auth.Password.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Iskra.Modules.Auth.Password.Controllers;
 
@@ -14,6 +15,7 @@ namespace Iskra.Modules.Auth.Password.Controllers;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
 [Produces("application/json")]
+[EnableRateLimiting("AuthPolicy")]
 public class PasswordAuthController(
     IPasswordLoginService loginService,
     IValidator<LoginRequest> validator) : ControllerBase

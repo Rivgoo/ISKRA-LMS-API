@@ -84,4 +84,6 @@ public class SwaggerModule : IModule
             }
         });
     }
+
+    public Task InitializeAsync(WebApplication app) => Task.CompletedTask;
 }

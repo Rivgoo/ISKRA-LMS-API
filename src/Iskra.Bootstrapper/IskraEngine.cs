@@ -49,6 +49,19 @@ public class IskraEngine
 
         foreach (var module in sortedModules)
             module.ConfigureMiddleware(app);
+    }
+
+    /// <summary>
+    /// Runs the async initialization logic for all modules (Migrations, Seeding).
+    /// Must be called before app.Run().
+    /// </summary>
+    public async Task InitializeModulesAsync(WebApplication app)
+    {
+        // Sort by priority to ensure infrastructure (DB) initializes before consumers (Users)
+        var sortedModules = _loadedModules.OrderBy(x => x.Priority).ToList();
+
+        foreach (var module in sortedModules)
+            await module.InitializeAsync(app);
 
         PrintBanner(sortedModules.Count, _environment);
     }

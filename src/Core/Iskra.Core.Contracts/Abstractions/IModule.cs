@@ -41,4 +41,10 @@ public interface IModule
     /// </summary>
     /// <param name="app">The web application builder.</param>
     void ConfigureMiddleware(WebApplication app);
+
+    /// <summary>
+    /// Performs asynchronous initialization tasks (e.g., DB Migrations, Seeding).
+    /// This is called after the app is built but before it starts running.
+    /// </summary>
+    Task InitializeAsync(WebApplication app);
 }

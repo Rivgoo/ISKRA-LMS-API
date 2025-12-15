@@ -7,7 +7,7 @@ namespace Iskra.Api.Host;
 /// </summary>
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,9 @@ public class Program
 
         // 2. Configure Pipeline (Middleware)
         engine.UseIskra(app);
+
+        // 3. Async Initialization
+        await engine.InitializeModulesAsync(app);
 
         app.MapControllers();
 

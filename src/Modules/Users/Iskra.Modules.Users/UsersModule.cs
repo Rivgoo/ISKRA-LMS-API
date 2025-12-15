@@ -49,10 +49,13 @@ public class UsersModule : IModule
 
     public void ConfigureMiddleware(WebApplication app)
     {
+    }
+
+    public async Task InitializeAsync(WebApplication app)
+    {
         using var scope = app.Services.CreateScope();
         var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
 
-        // Blocking wait is acceptable here to ensure Admin exists before requests come in
-        seeder.SeedAsync().Wait();
+        await seeder.SeedAsync();
     }
 }

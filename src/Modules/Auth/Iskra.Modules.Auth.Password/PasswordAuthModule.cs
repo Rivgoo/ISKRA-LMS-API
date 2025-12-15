@@ -28,4 +28,6 @@ public class PasswordAuthModule : IModule
     public void ConfigureMiddleware(WebApplication app)
     {
     }
+
+    public Task InitializeAsync(WebApplication app) => Task.CompletedTask;
 }

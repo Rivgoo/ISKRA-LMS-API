@@ -90,4 +90,6 @@ public class AuthModule : IModule
         app.UseAuthentication();
         app.UseAuthorization();
     }
+
+    public Task InitializeAsync(WebApplication app) => Task.CompletedTask;
 }

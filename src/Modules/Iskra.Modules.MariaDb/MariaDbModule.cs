@@ -70,32 +70,32 @@ public class MariaDbModule : IModule
 
     public void ConfigureMiddleware(WebApplication app)
     {
-        if (_moduleConfiguration == null) return;
-
-        var logger = app.Services.GetRequiredService<ILogger<MariaDbModule>>();
-
-        var autoMigrate = _moduleConfiguration.GetValue<bool>("DatabaseSettings:AutoMigrate");
-
-        if (autoMigrate)
-        {
-            ApplyMigrations(app);
-        }
-        else
-        {
-            logger.LogInformation($"Auto-migrations are DISABLED in configuration.");
-        }
     }
 
-    private void ApplyMigrations(IApplicationBuilder app)
+    public async Task InitializeAsync(WebApplication app)
+        => await ApplyMigrations(app);
+
+    private async Task ApplyMigrations(IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContextBase>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<MariaDbModule>>();
 
+        if(_moduleConfiguration == null)
+            throw new InvalidOperationException("Module configuration is not initialized.");
+
+        var autoMigrate = _moduleConfiguration.GetValue<bool>("DatabaseSettings:AutoMigrate");
+
+        if (!autoMigrate)
+        {
+            logger.LogInformation("Auto-migrations are disabled. Skipping migration step.");
+            return;
+        }
+
         try
         {
-            logger.LogInformation($"Applying pending migrations...");
-            db.Database.Migrate();
+            logger.LogInformation("Applying pending migrations (Async)...");
+            await db.Database.MigrateAsync();
             logger.LogInformation($"Migrations applied successfully.");
         }
         catch (Exception ex)
