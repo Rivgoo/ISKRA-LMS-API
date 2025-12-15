@@ -5,7 +5,7 @@ namespace Iskra.Core.Domain.Entities;
 /// <summary>
 /// Represents a security role (e.g., Student, Teacher, Administrator).
 /// </summary>
-public class Role : AuditableEntity<Guid>
+public class Role : ConcurrentEntity<Guid>
 {
     // Required by EF Core
     private Role() { }
@@ -24,6 +24,7 @@ public class Role : AuditableEntity<Guid>
         Name = name;
         Description = description;
         IsSystem = isSystem;
+        ConcurrencyToken = Guid.NewGuid();
     }
 
     /// <summary>

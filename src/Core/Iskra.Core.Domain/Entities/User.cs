@@ -5,7 +5,7 @@ namespace Iskra.Core.Domain.Entities;
 /// <summary>
 /// Represents a registered user within the system.
 /// </summary>
-public class User : AuditableEntity<Guid>
+public class User : ConcurrentEntity<Guid>
 {
     // Required by EF Core
     private User() { }
@@ -36,7 +36,8 @@ public class User : AuditableEntity<Guid>
             MiddleName = middleName,
             PasswordHash = passwordHash,
             IsEmailConfirmed = isEmailConfirmed,
-            IsActive = true
+            IsActive = true,
+            ConcurrencyToken = Guid.NewGuid()
         };
     }
 

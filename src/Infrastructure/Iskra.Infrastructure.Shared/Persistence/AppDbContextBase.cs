@@ -20,7 +20,7 @@ public abstract class AppDbContextBase : DbContext
     /// </summary>
     public override int SaveChanges()
     {
-        UpdateAuditFields();
+        UpdateInterceptors();
         return base.SaveChanges();
     }
 
@@ -30,24 +30,33 @@ public abstract class AppDbContextBase : DbContext
     /// </summary>
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        UpdateAuditFields();
+        UpdateInterceptors();
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    private void UpdateAuditFields()
+    private void UpdateInterceptors()
     {
-        var entries = ChangeTracker.Entries<IAuditable>();
+        var entries = ChangeTracker.Entries();
 
         foreach (var entry in entries)
         {
-            if (entry.State == EntityState.Added)
+            if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
             {
-                entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
-                entry.Entity.UpdatedAt = null;
-            }
-            else if (entry.State == EntityState.Modified)
-            {
-                entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                if (entry.Entity is IAuditable auditable)
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        auditable.CreatedAt = DateTimeOffset.UtcNow;
+                        auditable.UpdatedAt = null;
+                    }
+                    else
+                    {
+                        auditable.UpdatedAt = DateTimeOffset.UtcNow;
+                    }
+                }
+
+                if (entry.Entity is IConcurrent concurrent)
+                    concurrent.ConcurrencyToken = Guid.NewGuid();
             }
         }
     }
@@ -55,6 +64,17 @@ public abstract class AppDbContextBase : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(IConcurrent).IsAssignableFrom(entityType.ClrType))
+            {
+                var tokenProperty = entityType.FindProperty(nameof(IConcurrent.ConcurrencyToken));
+
+                if (tokenProperty != null)
+                    tokenProperty.IsConcurrencyToken = true;
+            }
+        }
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContextBase).Assembly);
 

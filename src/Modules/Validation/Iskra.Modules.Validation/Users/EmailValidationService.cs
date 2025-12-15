@@ -22,11 +22,11 @@ internal class EmailValidationService(IOptions<EmailValidationOptions> options) 
         if (email.Length > _options.MaxLength)
             return ValidationErrors.TooLong("Email", _options.MaxLength);
 
-        if(_options.AllowedDomains.Count == 0)
+        if (_options.AllowedDomains.Count == 0)
             return Result.Ok();
 
         var domain = email.Split('@')[1];
-        if (!_options.AllowedDomains.Contains(domain))
+        if (_options.AllowedDomains.Count > 0 && !_options.AllowedDomains.Contains(domain))
             return ValidationErrors.InvalidDomain("Email", domain);
 
         return Result.Ok();

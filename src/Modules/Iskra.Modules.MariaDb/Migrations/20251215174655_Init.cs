@@ -25,7 +25,8 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     is_system = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
+                    updated_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    concurrency_token = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -51,7 +52,8 @@ namespace Iskra.Modules.MariaDb.Migrations
                     is_active = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     is_email_confirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
+                    updated_at = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    concurrency_token = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {

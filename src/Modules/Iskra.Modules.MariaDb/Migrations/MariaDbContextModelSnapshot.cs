@@ -29,6 +29,11 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
 
+                    b.Property<Guid>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("concurrency_token");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
@@ -82,6 +87,11 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("concurrency_token");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)")

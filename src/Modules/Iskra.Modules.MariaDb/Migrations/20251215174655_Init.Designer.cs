@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Iskra.Modules.MariaDb.Migrations
 {
     [DbContext(typeof(MariaDbContext))]
-    [Migration("20251213195450_Init")]
+    [Migration("20251215174655_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -31,6 +31,11 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("concurrency_token");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -85,6 +90,11 @@ namespace Iskra.Modules.MariaDb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("concurrency_token");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)")

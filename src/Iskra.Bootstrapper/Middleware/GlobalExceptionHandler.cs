@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Iskra.Bootstrapper.Middleware;
@@ -21,11 +22,24 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
             Instance = httpContext.Request.Path
         };
 
-        logger.LogError(exception, "Unhandled Exception: {Message}", exception.Message);
-        problemDetails.Title = "Internal Server Error";
-        problemDetails.Status = StatusCodes.Status500InternalServerError;
-        problemDetails.Detail = "An unexpected error occurred. Please contact support.";
-        problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+        if (exception is DbUpdateConcurrencyException)
+        {
+            logger.LogWarning("Concurrency violation detected: {Message}", exception.Message);
+
+            problemDetails.Title = "Resource Conflict";
+            problemDetails.Status = StatusCodes.Status409Conflict;
+            problemDetails.Detail = "The resource you are trying to update has been modified by another user. Please reload and try again.";
+            problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8";
+        }
+        else
+        {
+            logger.LogError(exception, "Unhandled Exception: {Message}", exception.Message);
+
+            problemDetails.Title = "Internal Server Error";
+            problemDetails.Status = StatusCodes.Status500InternalServerError;
+            problemDetails.Detail = "An unexpected error occurred. Please contact support.";
+            problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+        }
 
         httpContext.Response.StatusCode = problemDetails.Status.Value;
 
