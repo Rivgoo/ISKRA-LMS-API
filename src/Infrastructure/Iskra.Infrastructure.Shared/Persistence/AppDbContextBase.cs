@@ -1,5 +1,6 @@
 ﻿using Iskra.Core.Contracts.Persistence;
 using Iskra.Core.Domain.Common;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Iskra.Infrastructure.Shared.Persistence;
@@ -8,8 +9,10 @@ namespace Iskra.Infrastructure.Shared.Persistence;
 /// An abstract base context that handles configuration discovery.
 /// Concrete providers (MariaDb, Postgres) will inherit from this.
 /// </summary>
-public abstract class AppDbContextBase : DbContext
+public abstract class AppDbContextBase : DbContext, IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
+
     protected AppDbContextBase(DbContextOptions options) : base(options)
     {
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Iskra.Modules.MariaDb.Migrations
 {
     [DbContext(typeof(MariaDbContext))]
-    [Migration("20251215174655_Init")]
+    [Migration("20251218173115_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -216,6 +216,28 @@ namespace Iskra.Modules.MariaDb.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("friendly_name");
+
+                    b.Property<string>("Xml")
+                        .HasColumnType("longtext")
+                        .HasColumnName("xml");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("data_protection_keys");
                 });
 
             modelBuilder.Entity("Iskra.Core.Domain.Entities.RolePermission", b =>
