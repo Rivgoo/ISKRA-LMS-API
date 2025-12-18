@@ -44,7 +44,4 @@
     <Project Path="src/Modules/Validation/Iskra.Modules.Validation.Abstractions/Iskra.Modules.Validation.Abstractions.csproj" Id="87fcbb80-bfb4-4291-a5aa-047a60ccb9b2" />
     <Project Path="src/Modules/Validation/Iskra.Modules.Validation/Iskra.Modules.Validation.csproj" />
   </Folder>
-  <Folder Name="/src/Shared/">
-    <Project Path="src/Shared/Iskra.Shared.CustomConsoleFormatter/Iskra.Shared.CustomConsoleFormatter.csproj" />
-  </Folder>
 </Solution>
