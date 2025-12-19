@@ -2,10 +2,13 @@
 using FluentValidation;
 using Iskra.Api.Abstractions.Authorization;
 using Iskra.Api.Abstractions.Extensions;
+using Iskra.Api.Abstractions.Filters;
 using Iskra.Api.Abstractions.Responses;
 using Iskra.Api.Abstractions.Services;
 using Iskra.Application.Errors.DomainErrors;
+using Iskra.Application.Filters.Abstractions;
 using Iskra.Application.Results;
+using Iskra.Core.Domain.Entities;
 using Iskra.Modules.Auth.Abstractions.Errors;
 using Iskra.Modules.Iam.Abstractions;
 using Iskra.Modules.Users.Abstractions.Models.Requests;
@@ -26,9 +29,38 @@ public class UsersController(
     ICurrentUser currentUser,
     IValidator<RegisterUserRequest> registerValidator,
     IValidator<UpdateUserRequest> updateValidator,
-    IValidator<ChangePasswordRequest> passwordValidator)
+    IValidator<ChangePasswordRequest> passwordValidator,
+    IDataQueryService<User, UserQueryRequest> queryService)
     : ControllerBase
 {
+    /// <summary>
+    /// Searches and sorts users based on specific criteria.
+    /// </summary>
+    /// <param name="request">Filter criteria.</param>
+    /// <param name="pageSize">Items per page.</param>
+    /// <param name="sortParams">Sorting parameters.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>A paginated list of users.</returns>
+    [HttpGet("filter")]
+    [HasPermission(IskraPermissions.Users.ReadDetail)]
+    public async Task<IActionResult> GetByFilter(
+        [FromQuery] UserQueryRequest request,
+        [FromQuery] int pageSize,
+        [FromQuery] SortParams sortParams,
+        CancellationToken ct)
+    {
+        var sortResult = request.ApplySorts(sortParams);
+        if (sortResult.IsFailure)
+            return sortResult.ToActionResult();
+
+        var result = await queryService
+            .Prepare(request)
+            .SetPageSize(pageSize)
+            .ExecuteAsync<UserResponse>(ct);
+
+        return result.ToActionResult();
+    }
+
     /// <summary>
     /// Retrieves comprehensive profile data.
     /// </summary>

@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Application\Iskra.Application.Filters.Abstractions\Iskra.Application.Filters.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Application\Iskra.Application.Results\Iskra.Application.Results.csproj" />
 	</ItemGroup>
 

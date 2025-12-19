@@ -12,6 +12,7 @@
   <Folder Name="/src/Application/">
     <Project Path="src/Application/Iskra.Application.Abstractions/Iskra.Application.Abstractions.csproj" Id="9925b2f1-2191-441a-9a24-72f2944e23ae" />
     <Project Path="src/Application/Iskra.Application.Errors/Iskra.Application.Errors.csproj" Id="0f1be345-46d8-4a5c-a0f7-8164b66c3bca" />
+    <Project Path="src/Application/Iskra.Application.Filters.Abstractions/Iskra.Application.Filters.Abstractions.csproj" Id="a08463e6-afca-47b1-a39f-1e19aa8b17ba" />
     <Project Path="src/Application/Iskra.Application.Results/Iskra.Application.Results.csproj" Id="ede27e3f-3bde-486b-98a6-3087fd3f7eb9" />
     <Project Path="src/Application/Iskra.Application.Services/Iskra.Application.Services.csproj" Id="28a17c52-f400-4cef-972c-e70ee5b52e18" />
   </Folder>
@@ -23,6 +24,7 @@
     <Project Path="src/Infrastructure/Iskra.Infrastructure.Shared/Iskra.Infrastructure.Shared.csproj" Id="2046b9b0-9020-4cf9-af96-2f8db6514bb7" />
   </Folder>
   <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/Iskra.Modules.Filters/Iskra.Modules.Filters.csproj" />
     <Project Path="src/Modules/Iskra.Modules.Iam.Abstractions/Iskra.Modules.Iam.Abstractions.csproj" Id="ade226c1-5c1e-47e8-8e20-e82446c22994" />
     <Project Path="src/Modules/Iskra.Modules.Iam/Iskra.Modules.Iam.csproj" Id="9f70d758-ec27-45a2-9adb-5d8a05778379" />
     <Project Path="src/Modules/Iskra.Modules.MariaDb/Iskra.Modules.MariaDb.csproj" Id="d97adb15-2b27-4fcf-b4eb-716acef63f6d" />

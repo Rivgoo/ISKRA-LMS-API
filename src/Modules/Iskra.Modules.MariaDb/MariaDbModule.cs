@@ -1,7 +1,9 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
 using Iskra.Infrastructure.Shared;
 using Iskra.Infrastructure.Shared.Persistence;
+using Iskra.Infrastructure.Shared.Search;
 using Iskra.Modules.MariaDb.Persistence;
+using Iskra.Modules.MariaDb.Search;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,6 +64,8 @@ public class MariaDbModule : IModule
         });
 
         logger.LogInformation($"Database Context registered.");
+
+        services.AddSingleton<ISearchProvider, MariaDbSearchProvider>();
 
         services.AddSharedInfrastructure();
 

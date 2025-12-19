@@ -1,8 +1,12 @@
 ﻿using FluentValidation;
+using Iskra.Application.Filters.Abstractions;
 using Iskra.Core.Contracts.Abstractions;
+using Iskra.Core.Domain.Entities;
 using Iskra.Modules.Users.Abstractions.Models.Requests;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
 using Iskra.Modules.Users.Abstractions.Repositories;
 using Iskra.Modules.Users.Abstractions.Services;
+using Iskra.Modules.Users.Filters;
 using Iskra.Modules.Users.Managers;
 using Iskra.Modules.Users.Options;
 using Iskra.Modules.Users.Options.Seeding;
@@ -42,6 +46,10 @@ public class UsersModule : IModule
         services.AddScoped<IValidator<RegisterUserRequest>, RegisterUserRequestValidator>();
         services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserRequestValidator>();
         services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
+
+        // Filters
+        services.AddScoped<IQuerySpecification<User, UserQueryRequest>, UserSpecification>();
+        services.AddScoped<IQueryProjector<User, UserResponse>, UserProjector>();
 
         // Register Seeder
         services.AddTransient<IdentitySeeder>();

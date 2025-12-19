@@ -3,15 +3,12 @@ using Iskra.Bootstrapper.Options;
 using Iskra.Bootstrapper.PluginManagement;
 using Iskra.Bootstrapper.Security;
 using Iskra.Bootstrapper.Security.Sanitization;
-using Iskra.Infrastructure.Shared.Persistence;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HostFiltering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 

@@ -1,7 +1,6 @@
 ﻿using Iskra.Core.Contracts.Abstractions;
 using Iskra.Core.Contracts.Constants;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Iskra.Bootstrapper.PluginManagement;

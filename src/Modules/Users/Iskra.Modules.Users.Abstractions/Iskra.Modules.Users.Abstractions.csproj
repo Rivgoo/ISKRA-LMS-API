@@ -9,7 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Application\Iskra.Application.Abstractions\Iskra.Application.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Application\Iskra.Application.Errors\Iskra.Application.Errors.csproj" />
+    <ProjectReference Include="..\..\..\Application\Iskra.Application.Filters.Abstractions\Iskra.Application.Filters.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Core\Iskra.Core.Domain\Iskra.Core.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Iskra.Infrastructure.Shared\Iskra.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
 </Project>
