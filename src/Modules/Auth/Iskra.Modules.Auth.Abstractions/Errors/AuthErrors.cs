@@ -4,6 +4,9 @@ namespace Iskra.Modules.Auth.Abstractions.Errors;
 
 public static class AuthErrors
 {
+    public static Error Forbidden
+        => Error.AccessForbidden("Auth.Forbidden", "Insufficient permissions to access this information.");
+
     public static Error InvalidSession
         => Error.Unauthorized("Auth.InvalidSession", "The session is invalid or expired.");
 

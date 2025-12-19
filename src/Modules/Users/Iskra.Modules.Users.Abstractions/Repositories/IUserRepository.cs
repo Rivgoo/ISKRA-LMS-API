@@ -1,5 +1,6 @@
 ﻿using Iskra.Application.Abstractions.Repositories;
 using Iskra.Core.Domain.Entities;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
 
 namespace Iskra.Modules.Users.Abstractions.Repositories;
 
@@ -31,4 +32,22 @@ public interface IUserRepository : IEntityOperations<User, Guid>
     /// <returns>A task that represents the asynchronous operation. The task result contains the number of records affected by
     /// the update.</returns>
     Task<int> UpdatePasswordHashAsync(Guid userId, string newPasswordHash, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Asynchronously retrieves the complete response data for the specified user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose response data is to be retrieved.</param>
+    /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="UserResponse"/> object
+    /// with the user's full response data, or <see langword="null"/> if no response is found for the specified user.</returns>
+    Task<UserResponse?> GetFullResponseAsync(Guid userId, CancellationToken ct);
+
+    /// <summary>
+    /// Asynchronously retrieves the public profile information for the specified user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose public information is to be retrieved.</param>
+    /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="UserPublicResponse"/>
+    /// with the user's public information if found; otherwise, <see langword="null"/>.</returns>
+    Task<UserPublicResponse?> GetPublicResponseAsync(Guid userId, CancellationToken ct);
 }

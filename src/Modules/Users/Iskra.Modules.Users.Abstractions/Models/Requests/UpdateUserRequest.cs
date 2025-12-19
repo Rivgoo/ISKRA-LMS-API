@@ -1,4 +1,4 @@
-﻿namespace Iskra.Modules.Users.Abstractions.Models;
+﻿namespace Iskra.Modules.Users.Abstractions.Models.Requests;
 
 public record UpdateUserRequest(
     string FirstName,

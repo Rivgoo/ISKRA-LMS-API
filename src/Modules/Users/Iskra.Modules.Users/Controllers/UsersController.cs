@@ -6,8 +6,10 @@ using Iskra.Api.Abstractions.Responses;
 using Iskra.Api.Abstractions.Services;
 using Iskra.Application.Errors.DomainErrors;
 using Iskra.Application.Results;
+using Iskra.Modules.Auth.Abstractions.Errors;
 using Iskra.Modules.Iam.Abstractions;
-using Iskra.Modules.Users.Abstractions.Models;
+using Iskra.Modules.Users.Abstractions.Models.Requests;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
 using Iskra.Modules.Users.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +29,57 @@ public class UsersController(
     IValidator<ChangePasswordRequest> passwordValidator)
     : ControllerBase
 {
+    /// <summary>
+    /// Retrieves comprehensive profile data.
+    /// </summary>
+    /// <param name="userId">The target user ID. If null, returns current user data.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>A detailed user record including roles and system metadata.</returns>
+    /// <response code="200">Returns the requested profile.</response>
+    /// <response code="403">Returned if accessing another user profile without the 'users.read.detail' permission.</response>
+    /// <response code="404">Returned if the user profile does not exist.</response>
+    /// <response code="401">Returned if the request is not authenticated.</response>
+    [HttpGet("{userId:guid?}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetFull(Guid? userId, CancellationToken ct)
+    {
+        var isExternalRequest = userId.HasValue && userId.Value != currentUser.Id;
+
+        if (isExternalRequest)
+        {
+            var allowed = await currentUser.HasPermissionAsync(IskraPermissions.Users.ReadDetail);
+
+            if (!allowed)
+                return Result.Bad(AuthErrors.Forbidden).ToActionResult();
+        }
+
+        var result = await userManager.GetFullProfileAsync(userId, ct);
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Retrieves public profile data.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Publicly accessible user information.</returns>
+    /// <response code="200">Returns the public profile.</response>
+    /// <response code="404">Returned if the user profile does not exist.</response>
+    /// <response code="401">Returned if the request is not authenticated.</response>
+    [HttpGet("public/{userId:guid?}")]
+    [HasPermission(IskraPermissions.Users.Read)]
+    [ProducesResponseType(typeof(UserPublicResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetPublic(Guid? userId, CancellationToken ct)
+    {
+        var result = await userManager.GetPublicProfileAsync(userId, ct);
+        return result.ToActionResult();
+    }
+
     /// <summary>
     /// Creates a new user (Admin function).
     /// To register publicly, use the Public Registration endpoint.

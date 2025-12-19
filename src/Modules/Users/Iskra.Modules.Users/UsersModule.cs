@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Iskra.Core.Contracts.Abstractions;
-using Iskra.Modules.Users.Abstractions.Models;
+using Iskra.Modules.Users.Abstractions.Models.Requests;
 using Iskra.Modules.Users.Abstractions.Repositories;
 using Iskra.Modules.Users.Abstractions.Services;
 using Iskra.Modules.Users.Managers;

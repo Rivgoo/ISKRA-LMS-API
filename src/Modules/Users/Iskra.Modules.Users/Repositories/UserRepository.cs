@@ -1,6 +1,7 @@
 ﻿using Iskra.Core.Domain.Entities;
 using Iskra.Infrastructure.Shared.Persistence;
 using Iskra.Infrastructure.Shared.Repositories;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
 using Iskra.Modules.Users.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,5 +27,38 @@ internal sealed class UserRepository(AppDbContextBase dbContext)
         return await Entities
             .Where(u => u.Id == userId)
             .ExecuteUpdateAsync(updates => updates.SetProperty(u => u.PasswordHash, newPasswordHash), cancellationToken);
+    }
+
+    public async Task<UserResponse?> GetFullResponseAsync(Guid userId, CancellationToken ct)
+    {
+        return await Entities.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Select(u => new UserResponse(
+                u.Id,
+                u.Email,
+                u.FirstName,
+                u.LastName,
+                u.MiddleName,
+                u.IsActive,
+                u.IsEmailConfirmed,
+                u.UserRoles.Select(ur => ur.Role!.Name).ToList(),
+                u.CreatedAt,
+                u.UpdatedAt
+            ))
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<UserPublicResponse?> GetPublicResponseAsync(Guid userId, CancellationToken ct)
+    {
+        return await Entities.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Select(u => new UserPublicResponse(
+                u.Id,
+                u.Email,
+                u.FirstName,
+                u.LastName,
+                u.MiddleName
+            ))
+            .FirstOrDefaultAsync(ct);
     }
 }

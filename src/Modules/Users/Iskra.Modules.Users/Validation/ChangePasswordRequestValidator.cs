@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Iskra.Modules.Users.Abstractions.Models;
+using Iskra.Modules.Users.Abstractions.Models.Requests;
 using Iskra.Modules.Validation.Abstractions.Options.Users;
 using Microsoft.Extensions.Options;
 

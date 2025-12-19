@@ -1,5 +1,6 @@
 ﻿using Iskra.Application.Results;
-using Iskra.Modules.Users.Abstractions.Models;
+using Iskra.Modules.Users.Abstractions.Models.Requests;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
 
 namespace Iskra.Modules.Users.Abstractions.Services;
 
@@ -40,4 +41,15 @@ public interface IUserManager
     /// Completely removes a user and all associated data (roles, sessions, etc.) from the system.
     /// </summary>
     Task<Result> DeleteUserAsync(Guid userId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Retrieves full account data. 
+    /// If targetId is null, returns data for the current requester.
+    /// </summary>
+    Task<Result<UserResponse>> GetFullProfileAsync(Guid? targetId = null, CancellationToken ct = default);
+
+    /// <summary>
+    /// Retrieves public profile data for a specific account.
+    /// </summary>
+    Task<Result<UserPublicResponse>> GetPublicProfileAsync(Guid? targetId, CancellationToken ct = default);
 }

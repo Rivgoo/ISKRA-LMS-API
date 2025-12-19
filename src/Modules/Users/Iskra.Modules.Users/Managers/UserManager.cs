@@ -1,9 +1,14 @@
-﻿using Iskra.Application.Abstractions.Security;
+﻿using Iskra.Api.Abstractions.Services;
+using Iskra.Application.Abstractions.Security;
+using Iskra.Application.Errors;
 using Iskra.Application.Errors.DomainErrors;
 using Iskra.Application.Results;
 using Iskra.Core.Domain.Entities;
+using Iskra.Modules.Auth.Abstractions.Errors;
 using Iskra.Modules.Iam.Abstractions.Services;
-using Iskra.Modules.Users.Abstractions.Models;
+using Iskra.Modules.Users.Abstractions.Models.Requests;
+using Iskra.Modules.Users.Abstractions.Models.Responses;
+using Iskra.Modules.Users.Abstractions.Repositories;
 using Iskra.Modules.Users.Abstractions.Services;
 using Iskra.Modules.Users.Options;
 using Iskra.Modules.Validation.Abstractions.Services;
@@ -15,6 +20,8 @@ namespace Iskra.Modules.Users.Managers;
 internal sealed class UserManager(
     IUserEntityService userEntityService,
     IUserRoleService userRoleService,
+    IUserRepository userRepository,
+    ICurrentUser currentUser,
     IPasswordHasher passwordHasher,
     IPasswordValidationService passwordValidator,
     IOptions<UserRegistrationOptions> registrationOptions,
@@ -132,5 +139,33 @@ internal sealed class UserManager(
         if (exists.IsFailure) return exists;
 
         return await userEntityService.DeleteByIdAsync(userId, ct);
+    }
+
+    public async Task<Result<UserResponse>> GetFullProfileAsync(Guid? targetId, CancellationToken ct)
+    {
+        var userId = targetId ?? currentUser.Id ?? Guid.Empty;
+
+        if (userId == Guid.Empty)
+            return Result<UserResponse>.Bad(AuthErrors.Forbidden);
+
+        var response = await userRepository.GetFullResponseAsync(userId, ct);
+
+        return response is not null
+            ? Result<UserResponse>.Ok(response)
+            : EntityErrors<User, Guid>.NotFoundById(userId);
+    }
+
+    public async Task<Result<UserPublicResponse>> GetPublicProfileAsync(Guid? targetId, CancellationToken ct)
+    {
+        var userId = targetId ?? currentUser.Id ?? Guid.Empty;
+
+        if (userId == Guid.Empty)
+            return Result<UserPublicResponse>.Bad(AuthErrors.Forbidden);
+
+        var response = await userRepository.GetPublicResponseAsync(userId, ct);
+
+        return response is not null
+            ? Result<UserPublicResponse>.Ok(response)
+            : EntityErrors<User, Guid>.NotFoundById(userId);
     }
 }

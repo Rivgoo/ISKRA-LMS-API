@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\..\Application\Iskra.Application.Services\Iskra.Application.Services.csproj" />
     <ProjectReference Include="..\..\..\Core\Iskra.Core.Contracts\Iskra.Core.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\Iskra.Infrastructure.Shared\Iskra.Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\..\Auth\Iskra.Modules.Auth.Abstractions\Iskra.Modules.Auth.Abstractions.csproj" />
     <ProjectReference Include="..\..\Iskra.Modules.Iam.Abstractions\Iskra.Modules.Iam.Abstractions.csproj" />
     <ProjectReference Include="..\..\Validation\Iskra.Modules.Validation.Abstractions\Iskra.Modules.Validation.Abstractions.csproj" />
     <ProjectReference Include="..\Iskra.Modules.Users.Abstractions\Iskra.Modules.Users.Abstractions.csproj" />
