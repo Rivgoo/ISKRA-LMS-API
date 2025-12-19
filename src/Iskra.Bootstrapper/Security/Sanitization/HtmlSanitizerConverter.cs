@@ -13,13 +13,14 @@ internal sealed class HtmlSanitizerConverter : JsonConverter<string>
 
     public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var rawString = reader.GetString();
+        string? data = reader.GetString();
 
-        if (string.IsNullOrEmpty(rawString))
-            return rawString;
+        if (string.IsNullOrEmpty(data))
+            return data;
 
-        // Perform XSS cleanup
-        return _sanitizer.Sanitize(rawString);
+        string processed = data.Trim();
+
+        return _sanitizer.Sanitize(processed);
     }
 
     public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
